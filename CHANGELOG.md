@@ -1,3 +1,9 @@
+## 0.3.0
+- **Realtime API & WebSocket**: Improved WebSocket stream handling, message streaming, and presence status subscription support.
+- **State Management Integration**: Optimized client interface for easier integration with state management patterns (e.g., BLoC) by exposing clean streams.
+- **Pagination & Loading**: Enhanced support for message history pagination and lazy loading user profiles.
+  
+
 ## 0.2.0
 
 - **Subscriptions API Support**: Added `client.subscriptions.get` and `client.subscriptions.read` for fetching active room subscriptions and marking subscriptions as read.
