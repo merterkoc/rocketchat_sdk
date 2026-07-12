@@ -1,3 +1,7 @@
+## 0.4.0
+
+- **Fix**: Included missing generated files (`.freezed.dart`, `.g.dart`) that were omitted in the `0.3.0` release.
+
 ## 0.3.0
 - **Realtime API & WebSocket**: Improved WebSocket stream handling, message streaming, and presence status subscription support.
 - **State Management Integration**: Optimized client interface for easier integration with state management patterns (e.g., BLoC) by exposing clean streams.
