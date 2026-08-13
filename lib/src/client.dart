@@ -78,9 +78,7 @@ class RocketChatClient {
     
     // Auto-connect if token exists
     if (this.authToken.isNotEmpty) {
-      realtime.connect().then((_) {
-        realtime.login(this.authToken);
-      }).catchError((_) {});
+      _syncInitialPresenceAndConnect(this.authToken);
     }
   }
 
@@ -89,6 +87,15 @@ class RocketChatClient {
     userId = uid;
     _updateHeaders(token, uid);
     
+    _syncInitialPresenceAndConnect(token);
+  }
+
+  void _syncInitialPresenceAndConnect(String token) {
+    // Fetch initial presence and populate cache
+    users.getUsersPresence().then((presences) {
+      realtime.syncInitialPresence(presences);
+    }).catchError((_) {});
+
     // Auto-connect and login to Realtime API
     realtime.connect().then((_) {
       realtime.login(token);

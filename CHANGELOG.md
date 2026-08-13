@@ -1,3 +1,9 @@
+## 0.5.0
+
+- **Feature**: Added Push API support (`client.push.registerToken`) for Firebase Cloud Messaging integration.
+- **Feature**: Implemented Rocket.Chat Realtime Presence support.
+- **Fix**: Resolved `Realtime Message Parsing Error` (`type 'Null' is not a subtype of type 'String' in type cast`) during realtime room message processing.
+
 ## 0.4.0
 
 - **Fix**: Included missing generated files (`.freezed.dart`, `.g.dart`) that were omitted in the `0.3.0` release.

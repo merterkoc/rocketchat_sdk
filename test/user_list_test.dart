@@ -74,5 +74,76 @@ void main() {
       expect(capturedOptions!.uri.queryParameters['count'], equals('5'));
       expect(capturedOptions!.uri.queryParameters['offset'], equals('1'));
     });
+
+    test('get users presence', () async {
+      final dio = Dio();
+      RequestOptions? capturedOptions;
+
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            if (options.path.contains('api/v1/users.presence')) {
+              capturedOptions = options;
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {
+                    'users': [
+                      {
+                        '_id': 'user_id_bob',
+                        'username': 'bob',
+                        'name': 'Bob Smith',
+                        'status': 'online',
+                      },
+                      {
+                        '_id': 'user_id_alice',
+                        'username': 'alice',
+                        'name': 'Alice Jones',
+                        'status': 'away',
+                      }
+                    ],
+                    'full': true,
+                    'success': true
+                  },
+                ),
+              );
+            } else {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                ),
+              );
+            }
+          },
+        ),
+      );
+
+      final client = RocketChatClient(
+        baseUrl: testBaseUrl,
+        authToken: testAuthToken,
+        userId: testUserId,
+        dio: dio,
+      );
+
+      final usersPresence = await client.users.getUsersPresence();
+
+      expect(usersPresence, isNotEmpty);
+      expect(usersPresence.length, equals(2));
+
+      final firstUser = usersPresence.first;
+      expect(firstUser['_id'], equals('user_id_bob'));
+      expect(firstUser['username'], equals('bob'));
+      expect(firstUser['status'], equals('online'));
+
+      final secondUser = usersPresence[1];
+      expect(secondUser['_id'], equals('user_id_alice'));
+      expect(secondUser['username'], equals('alice'));
+      expect(secondUser['status'], equals('away'));
+
+      expect(capturedOptions, isNotNull);
+      expect(capturedOptions!.path, contains('api/v1/users.presence'));
+    });
   });
 }

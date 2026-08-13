@@ -7,10 +7,11 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 enum UserPresenceStatus { offline, online, away, busy, unknown }
 
 class UserPresenceEvent {
+  final String userId;
   final String username;
   final UserPresenceStatus status;
 
-  UserPresenceEvent(this.username, this.status);
+  UserPresenceEvent(this.userId, this.username, this.status);
 }
 
 class RocketChatRealtimeApi {
@@ -34,6 +35,11 @@ class RocketChatRealtimeApi {
   Timer? _reconnectTimer;
   bool _isReconnecting = false;
   final _activeRoomSubs = <String>{};
+  
+  // Presence cache: userId -> UserPresenceStatus
+  final Map<String, UserPresenceStatus> _presenceCache = {};
+  final Map<String, UserPresenceStatus> _presenceCacheByUsername = {};
+  bool _isPresenceSubscribed = false;
 
   RocketChatRealtimeApi({required this.baseUrl, this.logPrinter});
 
@@ -130,12 +136,48 @@ class RocketChatRealtimeApi {
 
   /// Subscribes to the global user presence stream
   void subscribeToUserPresence() {
+    if (_isPresenceSubscribed) return;
+    _isPresenceSubscribed = true;
     _send({
       'msg': 'sub',
       'id': 'sub-presence',
-      'name': 'stream-user-presence',
-      'params': ['', false]
+      'name': 'stream-notify-logged',
+      'params': ['user-status', false]
     });
+  }
+
+  /// Populate the presence cache from initial sync
+  void syncInitialPresence(List<Map<String, dynamic>> usersPresence) {
+    for (final user in usersPresence) {
+      final userId = user['_id'] as String?;
+      final username = user['username'] as String?;
+      final statusStr = user['status'] as String?;
+      if (userId != null && statusStr != null) {
+        int statusInt = 0;
+        final str = statusStr.toLowerCase();
+        if (str == 'online') statusInt = 1;
+        else if (str == 'away') statusInt = 2;
+        else if (str == 'busy') statusInt = 3;
+        else statusInt = 0;
+        
+        final status = _mapStatus(statusInt);
+        _presenceCache[userId] = status;
+        if (username != null) {
+          _presenceCacheByUsername[username.toLowerCase()] = status;
+          _presenceController.add(UserPresenceEvent(userId, username, status));
+        }
+      }
+    }
+  }
+
+  /// Get synchronous presence for a user
+  UserPresenceStatus getUserPresence(String userId) {
+    return _presenceCache[userId] ?? UserPresenceStatus.offline;
+  }
+
+  /// Get synchronous presence for a user by username
+  UserPresenceStatus getUserPresenceByUsername(String username) {
+    return _presenceCacheByUsername[username.toLowerCase()] ?? UserPresenceStatus.offline;
   }
 
   /// Subscribes to the user's message stream globally
@@ -233,16 +275,51 @@ class RocketChatRealtimeApi {
         }
       } else if (msg == 'changed') {
         final collection = decoded['collection'];
-        if (collection == 'stream-user-presence') {
+        if (collection == 'stream-notify-logged') {
           final fields = decoded['fields'];
-          if (fields != null && fields['args'] != null) {
+          if (fields != null && fields['eventName'] == 'user-status' && fields['args'] != null) {
             final args = fields['args'] as List;
-            if (args.isNotEmpty && args[0] is List) {
-              final argData = args[0] as List;
-              if (argData.length >= 2) {
-                final username = argData[0] as String;
-                final statusInt = argData[1] as int;
-                _presenceController.add(UserPresenceEvent(username, _mapStatus(statusInt)));
+            if (args.isNotEmpty) {
+              _log('Presence event raw args: $args');
+              String? userId;
+              String? username;
+              int statusInt = 0;
+              
+              if (args[0] is List) {
+                final argData = args[0] as List;
+                if (argData.length >= 3) {
+                  userId = argData[0].toString();
+                  username = argData[1].toString();
+                  if (argData[2] is num) {
+                    statusInt = (argData[2] as num).toInt();
+                  } else if (argData[2] is String) {
+                    final str = argData[2].toString().toLowerCase();
+                    if (str == 'online') statusInt = 1;
+                    else if (str == 'away') statusInt = 2;
+                    else if (str == 'busy') statusInt = 3;
+                    else statusInt = 0;
+                  }
+                }
+              } else if (args.length >= 3) {
+                userId = args[0].toString();
+                username = args[1].toString();
+                if (args[2] is num) {
+                  statusInt = (args[2] as num).toInt();
+                } else if (args[2] is String) {
+                  final str = args[2].toString().toLowerCase();
+                  if (str == 'online') statusInt = 1;
+                  else if (str == 'away') statusInt = 2;
+                  else if (str == 'busy') statusInt = 3;
+                  else statusInt = 0;
+                }
+              }
+
+              if (userId != null && username != null) {
+                final status = _mapStatus(statusInt);
+                _log('Parsed presence for $username ($userId): $statusInt');
+                _presenceCache[userId] = status;
+                _presenceCacheByUsername[username.toLowerCase()] = status;
+                _presenceController.add(UserPresenceEvent(userId, username, status));
               }
             }
           }
@@ -252,6 +329,7 @@ class RocketChatRealtimeApi {
             final args = fields['args'] as List;
             for (final arg in args) {
               if (arg is Map<String, dynamic>) {
+                if (!arg.containsKey('_id')) continue;
                 try {
                   final normalized = _normalizeMessageJson(arg);
                   final msgObj = RocketChatMessage.fromJson(normalized);
@@ -286,5 +364,8 @@ class RocketChatRealtimeApi {
     unawaited(_presenceController.close());
     unawaited(_messageController.close());
     _isConnected = false;
+    _isPresenceSubscribed = false;
+    _presenceCache.clear();
+    _presenceCacheByUsername.clear();
   }
 }

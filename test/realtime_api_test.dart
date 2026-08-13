@@ -104,5 +104,28 @@ void main() {
         print('Timeout waiting for presence update for $targetUser. Test passes as stream is active.');
       }
     });
+
+    test('syncInitialPresence should parse and cache presence properly', () {
+      final initialData = [
+        {
+          '_id': 'user1',
+          'username': 'john',
+          'status': 'online',
+        },
+        {
+          '_id': 'user2',
+          'username': 'jane',
+          'status': 'away',
+        },
+      ];
+
+      realtimeApi.syncInitialPresence(initialData);
+
+      expect(realtimeApi.getUserPresence('user1'), equals(UserPresenceStatus.online));
+      expect(realtimeApi.getUserPresence('user2'), equals(UserPresenceStatus.away));
+      
+      expect(realtimeApi.getUserPresenceByUsername('john'), equals(UserPresenceStatus.online));
+      expect(realtimeApi.getUserPresenceByUsername('jane'), equals(UserPresenceStatus.away));
+    });
   });
 }
