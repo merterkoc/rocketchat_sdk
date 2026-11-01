@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RocketChatMessage {
 
-@JsonKey(name: '_id') String get id; String get rid; String get msg; String get ts;@JsonKey(name: 'u') RocketChatUser get sender; Map<String, dynamic>? get reactions;
+@JsonKey(name: '_id') String get id; String get rid; String get msg; String get ts;@JsonKey(name: 'u') RocketChatUser get sender; Map<String, dynamic>? get reactions; List<Map<String, dynamic>>? get attachments; Map<String, dynamic>? get file; List<Map<String, dynamic>>? get files;
 /// Create a copy of RocketChatMessage
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $RocketChatMessageCopyWith<RocketChatMessage> get copyWith => _$RocketChatMessag
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RocketChatMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.msg, msg) || other.msg == msg)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.sender, sender) || other.sender == sender)&&const DeepCollectionEquality().equals(other.reactions, reactions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RocketChatMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.msg, msg) || other.msg == msg)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.sender, sender) || other.sender == sender)&&const DeepCollectionEquality().equals(other.reactions, reactions)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&const DeepCollectionEquality().equals(other.file, file)&&const DeepCollectionEquality().equals(other.files, files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,rid,msg,ts,sender,const DeepCollectionEquality().hash(reactions));
+int get hashCode => Object.hash(runtimeType,id,rid,msg,ts,sender,const DeepCollectionEquality().hash(reactions),const DeepCollectionEquality().hash(attachments),const DeepCollectionEquality().hash(file),const DeepCollectionEquality().hash(files));
 
 @override
 String toString() {
-  return 'RocketChatMessage(id: $id, rid: $rid, msg: $msg, ts: $ts, sender: $sender, reactions: $reactions)';
+  return 'RocketChatMessage(id: $id, rid: $rid, msg: $msg, ts: $ts, sender: $sender, reactions: $reactions, attachments: $attachments, file: $file, files: $files)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $RocketChatMessageCopyWith<$Res>  {
   factory $RocketChatMessageCopyWith(RocketChatMessage value, $Res Function(RocketChatMessage) _then) = _$RocketChatMessageCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String rid, String msg, String ts,@JsonKey(name: 'u') RocketChatUser sender, Map<String, dynamic>? reactions
+@JsonKey(name: '_id') String id, String rid, String msg, String ts,@JsonKey(name: 'u') RocketChatUser sender, Map<String, dynamic>? reactions, List<Map<String, dynamic>>? attachments, Map<String, dynamic>? file, List<Map<String, dynamic>>? files
 });
 
 
@@ -65,7 +65,7 @@ class _$RocketChatMessageCopyWithImpl<$Res>
 
 /// Create a copy of RocketChatMessage
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? rid = null,Object? msg = null,Object? ts = null,Object? sender = null,Object? reactions = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? rid = null,Object? msg = null,Object? ts = null,Object? sender = null,Object? reactions = freezed,Object? attachments = freezed,Object? file = freezed,Object? files = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,rid: null == rid ? _self.rid : rid // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,10 @@ as String,msg: null == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nul
 as String,ts: null == ts ? _self.ts : ts // ignore: cast_nullable_to_non_nullable
 as String,sender: null == sender ? _self.sender : sender // ignore: cast_nullable_to_non_nullable
 as RocketChatUser,reactions: freezed == reactions ? _self.reactions : reactions // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as Map<String, dynamic>?,attachments: freezed == attachments ? _self.attachments : attachments // ignore: cast_nullable_to_non_nullable
+as List<Map<String, dynamic>>?,file: freezed == file ? _self.file : file // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,files: freezed == files ? _self.files : files // ignore: cast_nullable_to_non_nullable
+as List<Map<String, dynamic>>?,
   ));
 }
 /// Create a copy of RocketChatMessage
@@ -167,10 +170,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender,  Map<String, dynamic>? reactions)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RocketChatMessage() when $default != null:
-return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactions);case _:
+return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactions,_that.attachments,_that.file,_that.files);case _:
   return orElse();
 
 }
@@ -188,10 +191,10 @@ return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactio
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender,  Map<String, dynamic>? reactions)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files)  $default,) {final _that = this;
 switch (_that) {
 case _RocketChatMessage():
-return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactions);case _:
+return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactions,_that.attachments,_that.file,_that.files);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +211,10 @@ return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactio
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender,  Map<String, dynamic>? reactions)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files)?  $default,) {final _that = this;
 switch (_that) {
 case _RocketChatMessage() when $default != null:
-return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactions);case _:
+return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactions,_that.attachments,_that.file,_that.files);case _:
   return null;
 
 }
@@ -223,12 +226,12 @@ return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.reactio
 @JsonSerializable()
 
 class _RocketChatMessage implements RocketChatMessage {
-   _RocketChatMessage({@JsonKey(name: '_id') required this.id, required this.rid, required this.msg, required this.ts, @JsonKey(name: 'u') required this.sender, final  Map<String, dynamic>? reactions}): _reactions = reactions;
+   _RocketChatMessage({@JsonKey(name: '_id') required this.id, required this.rid, this.msg = '', required this.ts, @JsonKey(name: 'u') required this.sender, final  Map<String, dynamic>? reactions, final  List<Map<String, dynamic>>? attachments, final  Map<String, dynamic>? file, final  List<Map<String, dynamic>>? files}): _reactions = reactions,_attachments = attachments,_file = file,_files = files;
   factory _RocketChatMessage.fromJson(Map<String, dynamic> json) => _$RocketChatMessageFromJson(json);
 
 @override@JsonKey(name: '_id') final  String id;
 @override final  String rid;
-@override final  String msg;
+@override@JsonKey() final  String msg;
 @override final  String ts;
 @override@JsonKey(name: 'u') final  RocketChatUser sender;
  final  Map<String, dynamic>? _reactions;
@@ -238,6 +241,33 @@ class _RocketChatMessage implements RocketChatMessage {
   if (_reactions is EqualUnmodifiableMapView) return _reactions;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(value);
+}
+
+ final  List<Map<String, dynamic>>? _attachments;
+@override List<Map<String, dynamic>>? get attachments {
+  final value = _attachments;
+  if (value == null) return null;
+  if (_attachments is EqualUnmodifiableListView) return _attachments;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
+}
+
+ final  Map<String, dynamic>? _file;
+@override Map<String, dynamic>? get file {
+  final value = _file;
+  if (value == null) return null;
+  if (_file is EqualUnmodifiableMapView) return _file;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(value);
+}
+
+ final  List<Map<String, dynamic>>? _files;
+@override List<Map<String, dynamic>>? get files {
+  final value = _files;
+  if (value == null) return null;
+  if (_files is EqualUnmodifiableListView) return _files;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
 }
 
 
@@ -254,16 +284,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RocketChatMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.msg, msg) || other.msg == msg)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.sender, sender) || other.sender == sender)&&const DeepCollectionEquality().equals(other._reactions, _reactions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RocketChatMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.msg, msg) || other.msg == msg)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.sender, sender) || other.sender == sender)&&const DeepCollectionEquality().equals(other._reactions, _reactions)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&const DeepCollectionEquality().equals(other._file, _file)&&const DeepCollectionEquality().equals(other._files, _files));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,rid,msg,ts,sender,const DeepCollectionEquality().hash(_reactions));
+int get hashCode => Object.hash(runtimeType,id,rid,msg,ts,sender,const DeepCollectionEquality().hash(_reactions),const DeepCollectionEquality().hash(_attachments),const DeepCollectionEquality().hash(_file),const DeepCollectionEquality().hash(_files));
 
 @override
 String toString() {
-  return 'RocketChatMessage(id: $id, rid: $rid, msg: $msg, ts: $ts, sender: $sender, reactions: $reactions)';
+  return 'RocketChatMessage(id: $id, rid: $rid, msg: $msg, ts: $ts, sender: $sender, reactions: $reactions, attachments: $attachments, file: $file, files: $files)';
 }
 
 
@@ -274,7 +304,7 @@ abstract mixin class _$RocketChatMessageCopyWith<$Res> implements $RocketChatMes
   factory _$RocketChatMessageCopyWith(_RocketChatMessage value, $Res Function(_RocketChatMessage) _then) = __$RocketChatMessageCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String rid, String msg, String ts,@JsonKey(name: 'u') RocketChatUser sender, Map<String, dynamic>? reactions
+@JsonKey(name: '_id') String id, String rid, String msg, String ts,@JsonKey(name: 'u') RocketChatUser sender, Map<String, dynamic>? reactions, List<Map<String, dynamic>>? attachments, Map<String, dynamic>? file, List<Map<String, dynamic>>? files
 });
 
 
@@ -291,7 +321,7 @@ class __$RocketChatMessageCopyWithImpl<$Res>
 
 /// Create a copy of RocketChatMessage
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? rid = null,Object? msg = null,Object? ts = null,Object? sender = null,Object? reactions = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? rid = null,Object? msg = null,Object? ts = null,Object? sender = null,Object? reactions = freezed,Object? attachments = freezed,Object? file = freezed,Object? files = freezed,}) {
   return _then(_RocketChatMessage(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,rid: null == rid ? _self.rid : rid // ignore: cast_nullable_to_non_nullable
@@ -299,7 +329,10 @@ as String,msg: null == msg ? _self.msg : msg // ignore: cast_nullable_to_non_nul
 as String,ts: null == ts ? _self.ts : ts // ignore: cast_nullable_to_non_nullable
 as String,sender: null == sender ? _self.sender : sender // ignore: cast_nullable_to_non_nullable
 as RocketChatUser,reactions: freezed == reactions ? _self._reactions : reactions // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as Map<String, dynamic>?,attachments: freezed == attachments ? _self._attachments : attachments // ignore: cast_nullable_to_non_nullable
+as List<Map<String, dynamic>>?,file: freezed == file ? _self._file : file // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,files: freezed == files ? _self._files : files // ignore: cast_nullable_to_non_nullable
+as List<Map<String, dynamic>>?,
   ));
 }
 

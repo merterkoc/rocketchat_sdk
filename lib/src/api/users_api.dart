@@ -38,14 +38,18 @@ class RocketChatUsersApi {
     }
   }
 
-  /// Gets a specific user's info by their ID.
+  /// Gets a specific user's info by their ID or username.
   /// Corresponds to `GET /api/v1/users.info`
-  Future<RocketChatUser> info({required String userId}) async {
+  Future<RocketChatUser> info({String? userId, String? username}) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>(
         'api/v1/users.info',
         queryParameters: {
-          'userId': userId,
+          if (userId != null && userId.isNotEmpty) 'userId': userId,
+          if ((userId == null || userId.isEmpty) &&
+              username != null &&
+              username.isNotEmpty)
+            'username': username,
         },
       );
 

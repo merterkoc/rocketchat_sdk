@@ -1,3 +1,10 @@
+## 0.6.0
+
+- **Feature**: Added `client.dm.create` (`POST /api/v1/dm.create` with fallback to `api/v1/im.create`) to create or open direct message (DM) rooms by username.
+- **Feature**: Added `client.dm.sendMediaMessage` (`POST /api/v1/rooms.media/{roomId}` + `rooms.mediaConfirm/{roomId}/{fileId}` with fallback to `rooms.upload/{roomId}`) with `onSendProgress` callback and automatic MIME type inference for uploading image and video files.
+- **Feature**: Extended `RocketChatMessage` model with `attachments`, `file`, and `files` fields and added `RocketChatMessageMediaExtension` (`imageUrls`, `videoUrls`, `hasImage`, `hasVideo`, `attachmentDescription`) for media attachment parsing.
+- **Enhancement**: Updated `client.users.info` to support looking up user details by either `userId` or `username`.
+
 ## 0.5.0
 
 - **Feature**: Added Push API support (`client.push.registerToken`) for Firebase Cloud Messaging integration.

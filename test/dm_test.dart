@@ -72,5 +72,56 @@ void main() {
       expect(capturedOptions!.uri.queryParameters['count'], equals('10'));
       expect(capturedOptions!.uri.queryParameters['offset'], equals('0'));
     });
+
+    test('create DM room by username', () async {
+      final dio = Dio();
+      RequestOptions? capturedOptions;
+
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            if (options.path.contains('api/v1/dm.create')) {
+              capturedOptions = options;
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {
+                    'room': {
+                      't': 'd',
+                      'rid': 'created_room_456',
+                      'usernames': ['alice', 'user_123'],
+                    },
+                    'success': true,
+                  },
+                ),
+              );
+            } else {
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                ),
+              );
+            }
+          },
+        ),
+      );
+
+      final client = RocketChatClient(
+        baseUrl: testBaseUrl,
+        authToken: testAuthToken,
+        userId: testUserId,
+        dio: dio,
+      );
+
+      final room = await client.dm.create(username: 'user_123');
+
+      expect(room.id, equals('created_room_456'));
+      expect(room.t, equals('d'));
+      expect(room.usernames, containsAll(['alice', 'user_123']));
+      expect(capturedOptions, isNotNull);
+      expect(capturedOptions!.path, contains('api/v1/dm.create'));
+    });
   });
 }
