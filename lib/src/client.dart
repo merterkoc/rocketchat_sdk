@@ -70,7 +70,8 @@ class RocketChatClient {
     subscriptions = RocketChatSubscriptionsApi(this.dio);
     push = RocketChatPushApi(this.dio);
     realtime = RocketChatRealtimeApi(
-      baseUrl: this.baseUrl,
+      baseUrl: baseUrl,
+      userId: this.userId,
       logPrinter: enableLogging 
           ? (logPrinter ?? (msg) => print('[RocketChatSDK] $msg')) 
           : null,
@@ -85,21 +86,37 @@ class RocketChatClient {
   void _onLoginSuccess(String token, String uid) {
     authToken = token;
     userId = uid;
+    realtime.userId = uid;
     _updateHeaders(token, uid);
     
     _syncInitialPresenceAndConnect(token);
   }
 
   void _syncInitialPresenceAndConnect(String token) {
+    realtime.userId = userId;
     // Fetch initial presence and populate cache
     users.getUsersPresence().then((presences) {
       realtime.syncInitialPresence(presences);
     }).catchError((_) {});
 
-    // Auto-connect and login to Realtime API
-    realtime.connect().then((_) {
-      realtime.login(token);
-    }).catchError((_) {});
+    ensureRealtimeConnected(tokenOverride: token);
+  }
+
+  /// Ensures the Realtime WebSocket connection is active and logged in.
+  void ensureRealtimeConnected({String? tokenOverride}) {
+    final token = tokenOverride ?? authToken;
+    if (token.isEmpty) return;
+    realtime.userId = userId;
+    if (!realtime.isConnected && !realtime.isConnecting) {
+      realtime.connect().then((_) {
+        realtime.login(token, userId: userId);
+      }).catchError((_) {});
+    }
+  }
+
+  /// Disposes the client's realtime connection and resources.
+  void dispose() {
+    realtime.dispose();
   }
 
   void _updateHeaders(String token, String uid) {

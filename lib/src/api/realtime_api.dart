@@ -2,9 +2,31 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:rocketchat_sdk/src/models/message/message.dart';
+import 'package:rocketchat_sdk/src/models/subscription/subscription.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 enum UserPresenceStatus { offline, online, away, busy, unknown }
+
+class SubscriptionChangeEvent {
+  final String action; // 'updated', 'inserted', 'removed'
+  final Map<String, dynamic> data;
+  final RocketChatSubscription? subscription;
+
+  SubscriptionChangeEvent({
+    required this.action,
+    required this.data,
+    this.subscription,
+  });
+
+  String? get id => data['_id'] as String?;
+  String? get rid => data['rid'] as String?;
+  String? get name => data['name'] as String?;
+  String? get fname => data['fname'] as String?;
+  String? get roomType => data['t'] as String?;
+  bool? get open => data['open'] as bool?;
+  int? get unread => (data['unread'] as num?)?.toInt();
+  bool? get alert => data['alert'] as bool?;
+}
 
 class UserPresenceEvent {
   final String userId;
@@ -16,6 +38,7 @@ class UserPresenceEvent {
 
 class RocketChatRealtimeApi {
   final String baseUrl;
+  String? userId;
   final void Function(String)? logPrinter;
 
   WebSocketChannel? _channel;
@@ -27,8 +50,13 @@ class RocketChatRealtimeApi {
   final _messageController = StreamController<RocketChatMessage>.broadcast();
   Stream<RocketChatMessage> get messageStream => _messageController.stream;
 
+  final _subscriptionEventController = StreamController<SubscriptionChangeEvent>.broadcast();
+  Stream<SubscriptionChangeEvent> get subscriptionEventStream => _subscriptionEventController.stream;
+
   bool _isConnected = false;
   bool get isConnected => _isConnected;
+  bool _isConnecting = false;
+  bool get isConnecting => _isConnecting;
   
   String? _pendingLoginToken;
   String? _resumeToken;
@@ -40,8 +68,10 @@ class RocketChatRealtimeApi {
   final Map<String, UserPresenceStatus> _presenceCache = {};
   final Map<String, UserPresenceStatus> _presenceCacheByUsername = {};
   bool _isPresenceSubscribed = false;
+  bool _isUserNotificationsSubscribed = false;
+  bool _isMyMessagesSubscribed = false;
 
-  RocketChatRealtimeApi({required this.baseUrl, this.logPrinter});
+  RocketChatRealtimeApi({required this.baseUrl, this.userId, this.logPrinter});
 
   void _log(String message) {
     logPrinter?.call('[Realtime] $message');
@@ -49,9 +79,16 @@ class RocketChatRealtimeApi {
 
   /// Connects to the Realtime API WebSocket
   Future<void> connect() async {
-    if (_isConnected) return;
+    if (_isConnected || _isConnecting) return;
+    _isConnecting = true;
     
     _log('Connecting to Realtime API...');
+
+    // Clean up any previous subscription/channel before creating a new one
+    await _subscription?.cancel();
+    _subscription = null;
+    unawaited(_channel?.sink.close());
+    _channel = null;
 
     final uri = Uri.parse(baseUrl);
     final scheme = uri.scheme == 'https' ? 'wss' : 'ws';
@@ -72,11 +109,13 @@ class RocketChatRealtimeApi {
       },
       onError: (dynamic error) {
         _log('WebSocket Error: $error');
+        _isConnecting = false;
         _isConnected = false;
         _handleDisconnect();
       },
       onDone: () {
         _log('WebSocket Closed');
+        _isConnecting = false;
         _isConnected = false;
         _handleDisconnect();
       },
@@ -91,8 +130,11 @@ class RocketChatRealtimeApi {
   }
 
   /// Logins using a resume token (REST auth token)
-  void login(String resumeToken) {
+  void login(String resumeToken, {String? userId}) {
     _resumeToken = resumeToken;
+    if (userId != null && userId.isNotEmpty) {
+      this.userId = userId;
+    }
     if (!_isConnected) {
       _pendingLoginToken = resumeToken;
       _log('Queued login until connected');
@@ -109,7 +151,14 @@ class RocketChatRealtimeApi {
     });
   }
 
+  void _resetSubscriptionFlags() {
+    _isUserNotificationsSubscribed = false;
+    _isPresenceSubscribed = false;
+    _isMyMessagesSubscribed = false;
+  }
+
   void _handleDisconnect() {
+    _resetSubscriptionFlags();
     if (_isReconnecting) return;
     if (_resumeToken == null) {
       _log('No login token saved, skipping auto-reconnect');
@@ -125,12 +174,31 @@ class RocketChatRealtimeApi {
       try {
         await connect();
         if (_resumeToken != null) {
-          login(_resumeToken!);
+          login(_resumeToken!, userId: userId);
         }
       } on Object catch (e) {
         _log('Reconnection attempt failed: $e');
         _handleDisconnect();
       }
+    });
+  }
+
+  /// Subscribes to the user notification streams (subscriptions-changed, etc.)
+  void subscribeToUserNotifications(String uid) {
+    if (_isUserNotificationsSubscribed) return;
+    _isUserNotificationsSubscribed = true;
+    _log('Subscribing to user notifications for $uid');
+    _send({
+      'msg': 'sub',
+      'id': 'sub-user-subscriptions',
+      'name': 'stream-notify-user',
+      'params': ['$uid/subscriptions-changed', false]
+    });
+    _send({
+      'msg': 'sub',
+      'id': 'sub-user-rooms',
+      'name': 'stream-notify-user',
+      'params': ['$uid/rooms-changed', false]
     });
   }
 
@@ -182,6 +250,8 @@ class RocketChatRealtimeApi {
 
   /// Subscribes to the user's message stream globally
   void subscribeToMyMessages() {
+    if (_isMyMessagesSubscribed) return;
+    _isMyMessagesSubscribed = true;
     _send({
       'msg': 'sub',
       'id': 'sub-my-messages',
@@ -224,14 +294,16 @@ class RocketChatRealtimeApi {
     }
   }
 
-  Map<String, dynamic> _normalizeMessageJson(Map<String, dynamic> json) {
+  Map<String, dynamic> _normalizeEjsonMap(Map<String, dynamic> json) {
     final copy = Map<String, dynamic>.from(json);
-    if (copy['ts'] is Map) {
-      final dateMap = copy['ts'] as Map;
-      if (dateMap.containsKey(r'$date')) {
-        final ms = dateMap[r'$date'];
-        if (ms is num) {
-          copy['ts'] = DateTime.fromMillisecondsSinceEpoch(ms.toInt()).toIso8601String();
+    for (final key in ['ts', 'ls', '_updatedAt']) {
+      if (copy[key] is Map) {
+        final dateMap = copy[key] as Map;
+        if (dateMap.containsKey(r'$date')) {
+          final ms = dateMap[r'$date'];
+          if (ms is num) {
+            copy[key] = DateTime.fromMillisecondsSinceEpoch(ms.toInt()).toIso8601String();
+          }
         }
       }
     }
@@ -247,10 +319,11 @@ class RocketChatRealtimeApi {
       final msg = decoded['msg'];
       
       if (msg == 'connected') {
+        _isConnecting = false;
         _isConnected = true;
         _log('Connected successfully!');
         if (_pendingLoginToken != null) {
-          login(_pendingLoginToken!);
+          login(_pendingLoginToken!, userId: userId);
         }
       } else if (msg == 'ping') {
         _send({'msg': 'pong'});
@@ -259,6 +332,9 @@ class RocketChatRealtimeApi {
           _log('Login successful! Subscribing to user presence, global messages, and active room subs...');
           subscribeToUserPresence();
           subscribeToMyMessages();
+          if (userId != null && userId!.isNotEmpty) {
+            subscribeToUserNotifications(userId!);
+          }
           
           // Re-subscribe to all active room message streams
           for (final roomId in _activeRoomSubs) {
@@ -275,7 +351,48 @@ class RocketChatRealtimeApi {
         }
       } else if (msg == 'changed') {
         final collection = decoded['collection'];
-        if (collection == 'stream-notify-logged') {
+        if (collection == 'stream-notify-user') {
+          final fields = decoded['fields'];
+          if (fields != null) {
+            final eventName = fields['eventName'] as String?;
+            final args = fields['args'] as List?;
+            if (eventName != null && args != null) {
+              if (eventName.endsWith('/subscriptions-changed')) {
+                _log('subscriptions-changed event: $args');
+                final action = args.isNotEmpty ? args[0].toString() : 'updated';
+                final rawData = args.length > 1 && args[1] is Map<String, dynamic>
+                    ? args[1] as Map<String, dynamic>
+                    : null;
+                if (rawData != null) {
+                  final normalized = _normalizeEjsonMap(rawData);
+                  RocketChatSubscription? parsedSub;
+                  try {
+                    if (normalized.containsKey('_id') &&
+                        normalized.containsKey('rid') &&
+                        normalized.containsKey('name') &&
+                        normalized.containsKey('t')) {
+                      parsedSub = RocketChatSubscription.fromJson({
+                        'open': true,
+                        'alert': false,
+                        'unread': 0,
+                        ...normalized,
+                      });
+                    }
+                  } on Object catch (e) {
+                    _log('Error parsing subscription event model: $e');
+                  }
+                  if (!_subscriptionEventController.isClosed) {
+                    _subscriptionEventController.add(SubscriptionChangeEvent(
+                      action: action,
+                      data: normalized,
+                      subscription: parsedSub,
+                    ));
+                  }
+                }
+              }
+            }
+          }
+        } else if (collection == 'stream-notify-logged') {
           final fields = decoded['fields'];
           if (fields != null && fields['eventName'] == 'user-status' && fields['args'] != null) {
             final args = fields['args'] as List;
@@ -319,7 +436,9 @@ class RocketChatRealtimeApi {
                 _log('Parsed presence for $username ($userId): $statusInt');
                 _presenceCache[userId] = status;
                 _presenceCacheByUsername[username.toLowerCase()] = status;
-                _presenceController.add(UserPresenceEvent(userId, username, status));
+                if (!_presenceController.isClosed) {
+                  _presenceController.add(UserPresenceEvent(userId, username, status));
+                }
               }
             }
           }
@@ -331,9 +450,11 @@ class RocketChatRealtimeApi {
               if (arg is Map<String, dynamic>) {
                 if (!arg.containsKey('_id')) continue;
                 try {
-                  final normalized = _normalizeMessageJson(arg);
+                  final normalized = _normalizeEjsonMap(arg);
                   final msgObj = RocketChatMessage.fromJson(normalized);
-                  _messageController.add(msgObj);
+                  if (!_messageController.isClosed) {
+                    _messageController.add(msgObj);
+                  }
                 } on Object catch (e) {
                   _log('Error parsing room message: $e');
                 }
@@ -360,11 +481,15 @@ class RocketChatRealtimeApi {
   void dispose() {
     _reconnectTimer?.cancel();
     unawaited(_subscription?.cancel());
+    _subscription = null;
     unawaited(_channel?.sink.close());
+    _channel = null;
     unawaited(_presenceController.close());
     unawaited(_messageController.close());
+    unawaited(_subscriptionEventController.close());
+    _isConnecting = false;
     _isConnected = false;
-    _isPresenceSubscribed = false;
+    _resetSubscriptionFlags();
     _presenceCache.clear();
     _presenceCacheByUsername.clear();
   }
