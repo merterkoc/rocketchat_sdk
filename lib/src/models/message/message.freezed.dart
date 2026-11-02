@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RocketChatMessage {
 
-@JsonKey(name: '_id') String get id; String get rid; String get msg; String get ts;@JsonKey(name: 'u') RocketChatUser get sender;@JsonKey(name: 't') String? get type; List<RocketChatUser>? get mentions; Map<String, dynamic>? get reactions; List<Map<String, dynamic>>? get attachments; Map<String, dynamic>? get file; List<Map<String, dynamic>>? get files;
+@JsonKey(name: '_id') String get id; String get rid; String get msg; String get ts;@JsonKey(name: 'u') RocketChatUser get sender;@JsonKey(name: 't') String? get type; List<RocketChatUser>? get mentions; Map<String, dynamic>? get reactions; List<Map<String, dynamic>>? get attachments; Map<String, dynamic>? get file; List<Map<String, dynamic>>? get files; String? get roomName; String? get roomType;
 /// Create a copy of RocketChatMessage
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $RocketChatMessageCopyWith<RocketChatMessage> get copyWith => _$RocketChatMessag
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RocketChatMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.msg, msg) || other.msg == msg)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.mentions, mentions)&&const DeepCollectionEquality().equals(other.reactions, reactions)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&const DeepCollectionEquality().equals(other.file, file)&&const DeepCollectionEquality().equals(other.files, files));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RocketChatMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.msg, msg) || other.msg == msg)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.mentions, mentions)&&const DeepCollectionEquality().equals(other.reactions, reactions)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&const DeepCollectionEquality().equals(other.file, file)&&const DeepCollectionEquality().equals(other.files, files)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.roomType, roomType) || other.roomType == roomType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,rid,msg,ts,sender,type,const DeepCollectionEquality().hash(mentions),const DeepCollectionEquality().hash(reactions),const DeepCollectionEquality().hash(attachments),const DeepCollectionEquality().hash(file),const DeepCollectionEquality().hash(files));
+int get hashCode => Object.hash(runtimeType,id,rid,msg,ts,sender,type,const DeepCollectionEquality().hash(mentions),const DeepCollectionEquality().hash(reactions),const DeepCollectionEquality().hash(attachments),const DeepCollectionEquality().hash(file),const DeepCollectionEquality().hash(files),roomName,roomType);
 
 @override
 String toString() {
-  return 'RocketChatMessage(id: $id, rid: $rid, msg: $msg, ts: $ts, sender: $sender, type: $type, mentions: $mentions, reactions: $reactions, attachments: $attachments, file: $file, files: $files)';
+  return 'RocketChatMessage(id: $id, rid: $rid, msg: $msg, ts: $ts, sender: $sender, type: $type, mentions: $mentions, reactions: $reactions, attachments: $attachments, file: $file, files: $files, roomName: $roomName, roomType: $roomType)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $RocketChatMessageCopyWith<$Res>  {
   factory $RocketChatMessageCopyWith(RocketChatMessage value, $Res Function(RocketChatMessage) _then) = _$RocketChatMessageCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String rid, String msg, String ts,@JsonKey(name: 'u') RocketChatUser sender,@JsonKey(name: 't') String? type, List<RocketChatUser>? mentions, Map<String, dynamic>? reactions, List<Map<String, dynamic>>? attachments, Map<String, dynamic>? file, List<Map<String, dynamic>>? files
+@JsonKey(name: '_id') String id, String rid, String msg, String ts,@JsonKey(name: 'u') RocketChatUser sender,@JsonKey(name: 't') String? type, List<RocketChatUser>? mentions, Map<String, dynamic>? reactions, List<Map<String, dynamic>>? attachments, Map<String, dynamic>? file, List<Map<String, dynamic>>? files, String? roomName, String? roomType
 });
 
 
@@ -65,7 +65,7 @@ class _$RocketChatMessageCopyWithImpl<$Res>
 
 /// Create a copy of RocketChatMessage
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? rid = null,Object? msg = null,Object? ts = null,Object? sender = null,Object? type = freezed,Object? mentions = freezed,Object? reactions = freezed,Object? attachments = freezed,Object? file = freezed,Object? files = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? rid = null,Object? msg = null,Object? ts = null,Object? sender = null,Object? type = freezed,Object? mentions = freezed,Object? reactions = freezed,Object? attachments = freezed,Object? file = freezed,Object? files = freezed,Object? roomName = freezed,Object? roomType = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,rid: null == rid ? _self.rid : rid // ignore: cast_nullable_to_non_nullable
@@ -78,7 +78,9 @@ as List<RocketChatUser>?,reactions: freezed == reactions ? _self.reactions : rea
 as Map<String, dynamic>?,attachments: freezed == attachments ? _self.attachments : attachments // ignore: cast_nullable_to_non_nullable
 as List<Map<String, dynamic>>?,file: freezed == file ? _self.file : file // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>?,files: freezed == files ? _self.files : files // ignore: cast_nullable_to_non_nullable
-as List<Map<String, dynamic>>?,
+as List<Map<String, dynamic>>?,roomName: freezed == roomName ? _self.roomName : roomName // ignore: cast_nullable_to_non_nullable
+as String?,roomType: freezed == roomType ? _self.roomType : roomType // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of RocketChatMessage
@@ -172,10 +174,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender, @JsonKey(name: 't')  String? type,  List<RocketChatUser>? mentions,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender, @JsonKey(name: 't')  String? type,  List<RocketChatUser>? mentions,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files,  String? roomName,  String? roomType)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RocketChatMessage() when $default != null:
-return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_that.mentions,_that.reactions,_that.attachments,_that.file,_that.files);case _:
+return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_that.mentions,_that.reactions,_that.attachments,_that.file,_that.files,_that.roomName,_that.roomType);case _:
   return orElse();
 
 }
@@ -193,10 +195,10 @@ return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender, @JsonKey(name: 't')  String? type,  List<RocketChatUser>? mentions,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender, @JsonKey(name: 't')  String? type,  List<RocketChatUser>? mentions,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files,  String? roomName,  String? roomType)  $default,) {final _that = this;
 switch (_that) {
 case _RocketChatMessage():
-return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_that.mentions,_that.reactions,_that.attachments,_that.file,_that.files);case _:
+return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_that.mentions,_that.reactions,_that.attachments,_that.file,_that.files,_that.roomName,_that.roomType);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -213,10 +215,10 @@ return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender, @JsonKey(name: 't')  String? type,  List<RocketChatUser>? mentions,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: '_id')  String id,  String rid,  String msg,  String ts, @JsonKey(name: 'u')  RocketChatUser sender, @JsonKey(name: 't')  String? type,  List<RocketChatUser>? mentions,  Map<String, dynamic>? reactions,  List<Map<String, dynamic>>? attachments,  Map<String, dynamic>? file,  List<Map<String, dynamic>>? files,  String? roomName,  String? roomType)?  $default,) {final _that = this;
 switch (_that) {
 case _RocketChatMessage() when $default != null:
-return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_that.mentions,_that.reactions,_that.attachments,_that.file,_that.files);case _:
+return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_that.mentions,_that.reactions,_that.attachments,_that.file,_that.files,_that.roomName,_that.roomType);case _:
   return null;
 
 }
@@ -228,7 +230,7 @@ return $default(_that.id,_that.rid,_that.msg,_that.ts,_that.sender,_that.type,_t
 @JsonSerializable()
 
 class _RocketChatMessage implements RocketChatMessage {
-   _RocketChatMessage({@JsonKey(name: '_id') required this.id, required this.rid, this.msg = '', required this.ts, @JsonKey(name: 'u') required this.sender, @JsonKey(name: 't') this.type, final  List<RocketChatUser>? mentions, final  Map<String, dynamic>? reactions, final  List<Map<String, dynamic>>? attachments, final  Map<String, dynamic>? file, final  List<Map<String, dynamic>>? files}): _mentions = mentions,_reactions = reactions,_attachments = attachments,_file = file,_files = files;
+   _RocketChatMessage({@JsonKey(name: '_id') required this.id, required this.rid, this.msg = '', required this.ts, @JsonKey(name: 'u') required this.sender, @JsonKey(name: 't') this.type, final  List<RocketChatUser>? mentions, final  Map<String, dynamic>? reactions, final  List<Map<String, dynamic>>? attachments, final  Map<String, dynamic>? file, final  List<Map<String, dynamic>>? files, this.roomName, this.roomType}): _mentions = mentions,_reactions = reactions,_attachments = attachments,_file = file,_files = files;
   factory _RocketChatMessage.fromJson(Map<String, dynamic> json) => _$RocketChatMessageFromJson(json);
 
 @override@JsonKey(name: '_id') final  String id;
@@ -282,6 +284,8 @@ class _RocketChatMessage implements RocketChatMessage {
   return EqualUnmodifiableListView(value);
 }
 
+@override final  String? roomName;
+@override final  String? roomType;
 
 /// Create a copy of RocketChatMessage
 /// with the given fields replaced by the non-null parameter values.
@@ -296,16 +300,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RocketChatMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.msg, msg) || other.msg == msg)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._mentions, _mentions)&&const DeepCollectionEquality().equals(other._reactions, _reactions)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&const DeepCollectionEquality().equals(other._file, _file)&&const DeepCollectionEquality().equals(other._files, _files));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RocketChatMessage&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.msg, msg) || other.msg == msg)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._mentions, _mentions)&&const DeepCollectionEquality().equals(other._reactions, _reactions)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&const DeepCollectionEquality().equals(other._file, _file)&&const DeepCollectionEquality().equals(other._files, _files)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.roomType, roomType) || other.roomType == roomType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,rid,msg,ts,sender,type,const DeepCollectionEquality().hash(_mentions),const DeepCollectionEquality().hash(_reactions),const DeepCollectionEquality().hash(_attachments),const DeepCollectionEquality().hash(_file),const DeepCollectionEquality().hash(_files));
+int get hashCode => Object.hash(runtimeType,id,rid,msg,ts,sender,type,const DeepCollectionEquality().hash(_mentions),const DeepCollectionEquality().hash(_reactions),const DeepCollectionEquality().hash(_attachments),const DeepCollectionEquality().hash(_file),const DeepCollectionEquality().hash(_files),roomName,roomType);
 
 @override
 String toString() {
-  return 'RocketChatMessage(id: $id, rid: $rid, msg: $msg, ts: $ts, sender: $sender, type: $type, mentions: $mentions, reactions: $reactions, attachments: $attachments, file: $file, files: $files)';
+  return 'RocketChatMessage(id: $id, rid: $rid, msg: $msg, ts: $ts, sender: $sender, type: $type, mentions: $mentions, reactions: $reactions, attachments: $attachments, file: $file, files: $files, roomName: $roomName, roomType: $roomType)';
 }
 
 
@@ -316,7 +320,7 @@ abstract mixin class _$RocketChatMessageCopyWith<$Res> implements $RocketChatMes
   factory _$RocketChatMessageCopyWith(_RocketChatMessage value, $Res Function(_RocketChatMessage) _then) = __$RocketChatMessageCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String rid, String msg, String ts,@JsonKey(name: 'u') RocketChatUser sender,@JsonKey(name: 't') String? type, List<RocketChatUser>? mentions, Map<String, dynamic>? reactions, List<Map<String, dynamic>>? attachments, Map<String, dynamic>? file, List<Map<String, dynamic>>? files
+@JsonKey(name: '_id') String id, String rid, String msg, String ts,@JsonKey(name: 'u') RocketChatUser sender,@JsonKey(name: 't') String? type, List<RocketChatUser>? mentions, Map<String, dynamic>? reactions, List<Map<String, dynamic>>? attachments, Map<String, dynamic>? file, List<Map<String, dynamic>>? files, String? roomName, String? roomType
 });
 
 
@@ -333,7 +337,7 @@ class __$RocketChatMessageCopyWithImpl<$Res>
 
 /// Create a copy of RocketChatMessage
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? rid = null,Object? msg = null,Object? ts = null,Object? sender = null,Object? type = freezed,Object? mentions = freezed,Object? reactions = freezed,Object? attachments = freezed,Object? file = freezed,Object? files = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? rid = null,Object? msg = null,Object? ts = null,Object? sender = null,Object? type = freezed,Object? mentions = freezed,Object? reactions = freezed,Object? attachments = freezed,Object? file = freezed,Object? files = freezed,Object? roomName = freezed,Object? roomType = freezed,}) {
   return _then(_RocketChatMessage(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,rid: null == rid ? _self.rid : rid // ignore: cast_nullable_to_non_nullable
@@ -346,7 +350,9 @@ as List<RocketChatUser>?,reactions: freezed == reactions ? _self._reactions : re
 as Map<String, dynamic>?,attachments: freezed == attachments ? _self._attachments : attachments // ignore: cast_nullable_to_non_nullable
 as List<Map<String, dynamic>>?,file: freezed == file ? _self._file : file // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>?,files: freezed == files ? _self._files : files // ignore: cast_nullable_to_non_nullable
-as List<Map<String, dynamic>>?,
+as List<Map<String, dynamic>>?,roomName: freezed == roomName ? _self.roomName : roomName // ignore: cast_nullable_to_non_nullable
+as String?,roomType: freezed == roomType ? _self.roomType : roomType // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

@@ -446,11 +446,24 @@ class RocketChatRealtimeApi {
           final fields = decoded['fields'];
           if (fields != null && fields['args'] != null) {
             final args = fields['args'] as List;
+            Map<String, dynamic>? roomMetadata;
+            if (args.length > 1 && args[1] is Map<String, dynamic>) {
+              roomMetadata = args[1] as Map<String, dynamic>;
+            }
+
             for (final arg in args) {
               if (arg is Map<String, dynamic>) {
                 if (!arg.containsKey('_id')) continue;
                 try {
                   final normalized = _normalizeEjsonMap(arg);
+                  if (roomMetadata != null) {
+                    if (roomMetadata['roomName'] != null) {
+                      normalized['roomName'] = roomMetadata['roomName'];
+                    }
+                    if (roomMetadata['roomType'] != null) {
+                      normalized['roomType'] = roomMetadata['roomType'];
+                    }
+                  }
                   final msgObj = RocketChatMessage.fromJson(normalized);
                   if (!_messageController.isClosed) {
                     _messageController.add(msgObj);

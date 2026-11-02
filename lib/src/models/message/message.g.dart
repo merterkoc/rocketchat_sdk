@@ -15,8 +15,7 @@ _RocketChatMessage _$RocketChatMessageFromJson(Map<String, dynamic> json) =>
       sender: RocketChatUser.fromJson(json['u'] as Map<String, dynamic>),
       type: json['t'] as String?,
       mentions: (json['mentions'] as List<dynamic>?)
-          ?.whereType<Map<String, dynamic>>()
-          .map(RocketChatUser.fromJson)
+          ?.map((e) => RocketChatUser.fromJson(e as Map<String, dynamic>))
           .toList(),
       reactions: json['reactions'] as Map<String, dynamic>?,
       attachments: (json['attachments'] as List<dynamic>?)
@@ -26,6 +25,8 @@ _RocketChatMessage _$RocketChatMessageFromJson(Map<String, dynamic> json) =>
       files: (json['files'] as List<dynamic>?)
           ?.map((e) => e as Map<String, dynamic>)
           .toList(),
+      roomName: json['roomName'] as String?,
+      roomType: json['roomType'] as String?,
     );
 
 Map<String, dynamic> _$RocketChatMessageToJson(_RocketChatMessage instance) =>
@@ -41,4 +42,6 @@ Map<String, dynamic> _$RocketChatMessageToJson(_RocketChatMessage instance) =>
       'attachments': instance.attachments,
       'file': instance.file,
       'files': instance.files,
+      'roomName': instance.roomName,
+      'roomType': instance.roomType,
     };

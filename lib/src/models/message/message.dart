@@ -19,6 +19,8 @@ abstract class RocketChatMessage with _$RocketChatMessage {
     List<Map<String, dynamic>>? attachments,
     Map<String, dynamic>? file,
     List<Map<String, dynamic>>? files,
+    String? roomName,
+    String? roomType,
   }) = _RocketChatMessage;
 
   factory RocketChatMessage.fromJson(Map<String, dynamic> json) =>
