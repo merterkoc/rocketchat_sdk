@@ -13,6 +13,8 @@ abstract class RocketChatMessage with _$RocketChatMessage {
     @Default('') String msg,
     required String ts,
     @JsonKey(name: 'u') required RocketChatUser sender,
+    @JsonKey(name: 't') String? type,
+    List<RocketChatUser>? mentions,
     Map<String, dynamic>? reactions,
     List<Map<String, dynamic>>? attachments,
     Map<String, dynamic>? file,

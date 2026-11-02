@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../message/message.dart';
 import '../user/user.dart';
 
 part 'channel_room.freezed.dart';
@@ -17,6 +18,7 @@ abstract class ChannelRoom with _$ChannelRoom {
     @JsonKey(name: 'u') required RocketChatUser creator,
     String? topic,
     String? description,
+    RocketChatMessage? lastMessage,
   }) = _ChannelRoom;
 
   factory ChannelRoom.fromJson(Map<String, dynamic> json) =>

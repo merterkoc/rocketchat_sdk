@@ -13,6 +13,11 @@ _RocketChatMessage _$RocketChatMessageFromJson(Map<String, dynamic> json) =>
       msg: json['msg'] as String? ?? '',
       ts: json['ts'] as String,
       sender: RocketChatUser.fromJson(json['u'] as Map<String, dynamic>),
+      type: json['t'] as String?,
+      mentions: (json['mentions'] as List<dynamic>?)
+          ?.whereType<Map<String, dynamic>>()
+          .map(RocketChatUser.fromJson)
+          .toList(),
       reactions: json['reactions'] as Map<String, dynamic>?,
       attachments: (json['attachments'] as List<dynamic>?)
           ?.map((e) => e as Map<String, dynamic>)
@@ -30,6 +35,8 @@ Map<String, dynamic> _$RocketChatMessageToJson(_RocketChatMessage instance) =>
       'msg': instance.msg,
       'ts': instance.ts,
       'u': instance.sender,
+      't': instance.type,
+      'mentions': instance.mentions,
       'reactions': instance.reactions,
       'attachments': instance.attachments,
       'file': instance.file,

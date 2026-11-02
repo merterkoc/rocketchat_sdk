@@ -16,6 +16,9 @@ _ChannelRoom _$ChannelRoomFromJson(Map<String, dynamic> json) => _ChannelRoom(
   creator: RocketChatUser.fromJson(json['u'] as Map<String, dynamic>),
   topic: json['topic'] as String?,
   description: json['description'] as String?,
+  lastMessage: json['lastMessage'] == null
+      ? null
+      : RocketChatMessage.fromJson(json['lastMessage'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$ChannelRoomToJson(_ChannelRoom instance) =>
@@ -29,4 +32,5 @@ Map<String, dynamic> _$ChannelRoomToJson(_ChannelRoom instance) =>
       'u': instance.creator,
       'topic': instance.topic,
       'description': instance.description,
+      'lastMessage': instance.lastMessage,
     };
