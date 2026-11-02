@@ -1,3 +1,17 @@
+## 0.7.0
+
+- **Feature**: Extended `RocketChatMessage` model with:
+  - `type` (`t`): System message type identifier (e.g. `uj` for user joined, `ul` for user left).
+  - `mentions`: List of mentioned users (`List<RocketChatUser>`) in the message.
+  - `roomName` and `roomType`: Resolved room name and type metadata received from realtime events.
+- **Feature**: Extended `ChannelRoom` model with `lastMessage` (`RocketChatMessage`) to support channel previews and unread indicators.
+- **Realtime API Enhancements**:
+  - Added `subscriptionEventStream` on `RocketChatRealtimeApi` emitting `SubscriptionChangeEvent` for `stream-notify-user` rooms/subscriptions changed events.
+  - Parsed extra metadata (`args[1]`) from `stream-room-messages` to enrich incoming realtime messages with `roomName` and `roomType`.
+  - Added race-condition protection against duplicate WebSocket connections (`_isConnecting` flag).
+  - Ensured previous WebSocket subscriptions and channel sinks are thoroughly cancelled before establishing reconnects.
+  - Cleaned up subscription flags upon disconnects and auto-reconnects to ensure streams reliably resubscribe.
+
 ## 0.6.0
 
 - **Feature**: Added `client.dm.create` (`POST /api/v1/dm.create` with fallback to `api/v1/im.create`) to create or open direct message (DM) rooms by username.
