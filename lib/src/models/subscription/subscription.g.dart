@@ -22,6 +22,7 @@ _RocketChatSubscription _$RocketChatSubscriptionFromJson(
   ts: json['ts'] as String?,
   ls: json['ls'] as String?,
   f: json['f'] as bool?,
+  readOnly: _readOnlyValue(json, 'ro') as bool? ?? false,
 );
 
 Map<String, dynamic> _$RocketChatSubscriptionToJson(
@@ -40,4 +41,5 @@ Map<String, dynamic> _$RocketChatSubscriptionToJson(
   'ts': instance.ts,
   'ls': instance.ls,
   'f': instance.f,
+  'ro': instance.readOnly,
 };

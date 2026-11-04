@@ -31,7 +31,22 @@ void main() {
                           '_id': 'user_id_creator',
                           'username': 'creator_user',
                           'name': 'Creator User',
-                        }
+                        },
+                        'ro': false,
+                      },
+                      {
+                        '_id': 'channel_id_announcements',
+                        'name': 'announcements',
+                        't': 'c',
+                        'msgs': 5,
+                        'usersCount': 50,
+                        'ts': '2026-05-30T00:00:00.000Z',
+                        'u': {
+                          '_id': 'user_id_creator',
+                          'username': 'creator_user',
+                          'name': 'Creator User',
+                        },
+                        'ro': true,
                       }
                     ],
                     'success': true
@@ -60,7 +75,7 @@ void main() {
       final channels = await client.channels.list(count: 10, offset: 0);
 
       expect(channels, isNotEmpty);
-      expect(channels.length, equals(1));
+      expect(channels.length, equals(2));
 
       final channel = channels.first;
       expect(channel.id, equals('channel_id_general'));
@@ -69,6 +84,11 @@ void main() {
       expect(channel.msgs, equals(120));
       expect(channel.usersCount, equals(15));
       expect(channel.ts, equals('2026-05-30T00:00:00.000Z'));
+      expect(channel.readOnly, isFalse);
+
+      final readOnlyChannel = channels[1];
+      expect(readOnlyChannel.id, equals('channel_id_announcements'));
+      expect(readOnlyChannel.readOnly, isTrue);
       
       expect(channel.creator, isNotNull);
       expect(channel.creator.id, equals('user_id_creator'));

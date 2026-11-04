@@ -1,3 +1,10 @@
+## 0.7.1
+
+- **Feature**: Added `readOnly` property to `ChannelRoom` and `RocketChatSubscription` models:
+  - Supports automatic parsing from `ro` (standard Rocket.Chat API boolean field) and `readOnly` fallback.
+  - Allows detecting read-only / announcement channels to adapt UI and messaging controls accordingly.
+- **Tests**: Added unit tests verifying `readOnly` parsing for public and announcement channels.
+
 ## 0.7.0
 
 - **Feature**: Extended `RocketChatMessage` model with:

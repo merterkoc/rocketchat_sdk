@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$ChannelRoom {
 
 @JsonKey(name: '_id') String get id; String get name; String get t;// "c" for public channel, "p" for private channel
- int get msgs; int get usersCount; String get ts;@JsonKey(name: 'u') RocketChatUser get creator; String? get topic; String? get description; RocketChatMessage? get lastMessage;
+ int get msgs; int get usersCount; String get ts;@JsonKey(name: 'u') RocketChatUser get creator; String? get topic; String? get description; RocketChatMessage? get lastMessage;@JsonKey(name: 'ro', readValue: _readOnlyValue) bool get readOnly;
 /// Create a copy of ChannelRoom
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $ChannelRoomCopyWith<ChannelRoom> get copyWith => _$ChannelRoomCopyWithImpl<Chan
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChannelRoom&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.t, t) || other.t == t)&&(identical(other.msgs, msgs) || other.msgs == msgs)&&(identical(other.usersCount, usersCount) || other.usersCount == usersCount)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.topic, topic) || other.topic == topic)&&(identical(other.description, description) || other.description == description)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChannelRoom&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.t, t) || other.t == t)&&(identical(other.msgs, msgs) || other.msgs == msgs)&&(identical(other.usersCount, usersCount) || other.usersCount == usersCount)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.topic, topic) || other.topic == topic)&&(identical(other.description, description) || other.description == description)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.readOnly, readOnly) || other.readOnly == readOnly));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,t,msgs,usersCount,ts,creator,topic,description,lastMessage);
+int get hashCode => Object.hash(runtimeType,id,name,t,msgs,usersCount,ts,creator,topic,description,lastMessage,readOnly);
 
 @override
 String toString() {
-  return 'ChannelRoom(id: $id, name: $name, t: $t, msgs: $msgs, usersCount: $usersCount, ts: $ts, creator: $creator, topic: $topic, description: $description, lastMessage: $lastMessage)';
+  return 'ChannelRoom(id: $id, name: $name, t: $t, msgs: $msgs, usersCount: $usersCount, ts: $ts, creator: $creator, topic: $topic, description: $description, lastMessage: $lastMessage, readOnly: $readOnly)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $ChannelRoomCopyWith<$Res>  {
   factory $ChannelRoomCopyWith(ChannelRoom value, $Res Function(ChannelRoom) _then) = _$ChannelRoomCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String name, String t, int msgs, int usersCount, String ts,@JsonKey(name: 'u') RocketChatUser creator, String? topic, String? description, RocketChatMessage? lastMessage
+@JsonKey(name: '_id') String id, String name, String t, int msgs, int usersCount, String ts,@JsonKey(name: 'u') RocketChatUser creator, String? topic, String? description, RocketChatMessage? lastMessage,@JsonKey(name: 'ro', readValue: _readOnlyValue) bool readOnly
 });
 
 
@@ -66,7 +66,7 @@ class _$ChannelRoomCopyWithImpl<$Res>
 
 /// Create a copy of ChannelRoom
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? t = null,Object? msgs = null,Object? usersCount = null,Object? ts = null,Object? creator = null,Object? topic = freezed,Object? description = freezed,Object? lastMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? t = null,Object? msgs = null,Object? usersCount = null,Object? ts = null,Object? creator = null,Object? topic = freezed,Object? description = freezed,Object? lastMessage = freezed,Object? readOnly = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -78,7 +78,8 @@ as String,creator: null == creator ? _self.creator : creator // ignore: cast_nul
 as RocketChatUser,topic: freezed == topic ? _self.topic : topic // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,lastMessage: freezed == lastMessage ? _self.lastMessage : lastMessage // ignore: cast_nullable_to_non_nullable
-as RocketChatMessage?,
+as RocketChatMessage?,readOnly: null == readOnly ? _self.readOnly : readOnly // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 /// Create a copy of ChannelRoom
@@ -184,10 +185,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String name,  String t,  int msgs,  int usersCount,  String ts, @JsonKey(name: 'u')  RocketChatUser creator,  String? topic,  String? description,  RocketChatMessage? lastMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String name,  String t,  int msgs,  int usersCount,  String ts, @JsonKey(name: 'u')  RocketChatUser creator,  String? topic,  String? description,  RocketChatMessage? lastMessage, @JsonKey(name: 'ro', readValue: _readOnlyValue)  bool readOnly)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChannelRoom() when $default != null:
-return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts,_that.creator,_that.topic,_that.description,_that.lastMessage);case _:
+return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts,_that.creator,_that.topic,_that.description,_that.lastMessage,_that.readOnly);case _:
   return orElse();
 
 }
@@ -205,10 +206,10 @@ return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String name,  String t,  int msgs,  int usersCount,  String ts, @JsonKey(name: 'u')  RocketChatUser creator,  String? topic,  String? description,  RocketChatMessage? lastMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String name,  String t,  int msgs,  int usersCount,  String ts, @JsonKey(name: 'u')  RocketChatUser creator,  String? topic,  String? description,  RocketChatMessage? lastMessage, @JsonKey(name: 'ro', readValue: _readOnlyValue)  bool readOnly)  $default,) {final _that = this;
 switch (_that) {
 case _ChannelRoom():
-return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts,_that.creator,_that.topic,_that.description,_that.lastMessage);case _:
+return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts,_that.creator,_that.topic,_that.description,_that.lastMessage,_that.readOnly);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -225,10 +226,10 @@ return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: '_id')  String id,  String name,  String t,  int msgs,  int usersCount,  String ts, @JsonKey(name: 'u')  RocketChatUser creator,  String? topic,  String? description,  RocketChatMessage? lastMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: '_id')  String id,  String name,  String t,  int msgs,  int usersCount,  String ts, @JsonKey(name: 'u')  RocketChatUser creator,  String? topic,  String? description,  RocketChatMessage? lastMessage, @JsonKey(name: 'ro', readValue: _readOnlyValue)  bool readOnly)?  $default,) {final _that = this;
 switch (_that) {
 case _ChannelRoom() when $default != null:
-return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts,_that.creator,_that.topic,_that.description,_that.lastMessage);case _:
+return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts,_that.creator,_that.topic,_that.description,_that.lastMessage,_that.readOnly);case _:
   return null;
 
 }
@@ -240,7 +241,7 @@ return $default(_that.id,_that.name,_that.t,_that.msgs,_that.usersCount,_that.ts
 @JsonSerializable()
 
 class _ChannelRoom implements ChannelRoom {
-   _ChannelRoom({@JsonKey(name: '_id') required this.id, required this.name, required this.t, required this.msgs, required this.usersCount, required this.ts, @JsonKey(name: 'u') required this.creator, this.topic, this.description, this.lastMessage});
+   _ChannelRoom({@JsonKey(name: '_id') required this.id, required this.name, required this.t, required this.msgs, required this.usersCount, required this.ts, @JsonKey(name: 'u') required this.creator, this.topic, this.description, this.lastMessage, @JsonKey(name: 'ro', readValue: _readOnlyValue) this.readOnly = false});
   factory _ChannelRoom.fromJson(Map<String, dynamic> json) => _$ChannelRoomFromJson(json);
 
 @override@JsonKey(name: '_id') final  String id;
@@ -254,6 +255,7 @@ class _ChannelRoom implements ChannelRoom {
 @override final  String? topic;
 @override final  String? description;
 @override final  RocketChatMessage? lastMessage;
+@override@JsonKey(name: 'ro', readValue: _readOnlyValue) final  bool readOnly;
 
 /// Create a copy of ChannelRoom
 /// with the given fields replaced by the non-null parameter values.
@@ -268,16 +270,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChannelRoom&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.t, t) || other.t == t)&&(identical(other.msgs, msgs) || other.msgs == msgs)&&(identical(other.usersCount, usersCount) || other.usersCount == usersCount)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.topic, topic) || other.topic == topic)&&(identical(other.description, description) || other.description == description)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChannelRoom&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.t, t) || other.t == t)&&(identical(other.msgs, msgs) || other.msgs == msgs)&&(identical(other.usersCount, usersCount) || other.usersCount == usersCount)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.topic, topic) || other.topic == topic)&&(identical(other.description, description) || other.description == description)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.readOnly, readOnly) || other.readOnly == readOnly));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,t,msgs,usersCount,ts,creator,topic,description,lastMessage);
+int get hashCode => Object.hash(runtimeType,id,name,t,msgs,usersCount,ts,creator,topic,description,lastMessage,readOnly);
 
 @override
 String toString() {
-  return 'ChannelRoom(id: $id, name: $name, t: $t, msgs: $msgs, usersCount: $usersCount, ts: $ts, creator: $creator, topic: $topic, description: $description, lastMessage: $lastMessage)';
+  return 'ChannelRoom(id: $id, name: $name, t: $t, msgs: $msgs, usersCount: $usersCount, ts: $ts, creator: $creator, topic: $topic, description: $description, lastMessage: $lastMessage, readOnly: $readOnly)';
 }
 
 
@@ -288,7 +290,7 @@ abstract mixin class _$ChannelRoomCopyWith<$Res> implements $ChannelRoomCopyWith
   factory _$ChannelRoomCopyWith(_ChannelRoom value, $Res Function(_ChannelRoom) _then) = __$ChannelRoomCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String name, String t, int msgs, int usersCount, String ts,@JsonKey(name: 'u') RocketChatUser creator, String? topic, String? description, RocketChatMessage? lastMessage
+@JsonKey(name: '_id') String id, String name, String t, int msgs, int usersCount, String ts,@JsonKey(name: 'u') RocketChatUser creator, String? topic, String? description, RocketChatMessage? lastMessage,@JsonKey(name: 'ro', readValue: _readOnlyValue) bool readOnly
 });
 
 
@@ -305,7 +307,7 @@ class __$ChannelRoomCopyWithImpl<$Res>
 
 /// Create a copy of ChannelRoom
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? t = null,Object? msgs = null,Object? usersCount = null,Object? ts = null,Object? creator = null,Object? topic = freezed,Object? description = freezed,Object? lastMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? t = null,Object? msgs = null,Object? usersCount = null,Object? ts = null,Object? creator = null,Object? topic = freezed,Object? description = freezed,Object? lastMessage = freezed,Object? readOnly = null,}) {
   return _then(_ChannelRoom(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -317,7 +319,8 @@ as String,creator: null == creator ? _self.creator : creator // ignore: cast_nul
 as RocketChatUser,topic: freezed == topic ? _self.topic : topic // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,lastMessage: freezed == lastMessage ? _self.lastMessage : lastMessage // ignore: cast_nullable_to_non_nullable
-as RocketChatMessage?,
+as RocketChatMessage?,readOnly: null == readOnly ? _self.readOnly : readOnly // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

@@ -5,6 +5,9 @@ import '../user/user.dart';
 part 'channel_room.freezed.dart';
 part 'channel_room.g.dart';
 
+Object? _readOnlyValue(Map<dynamic, dynamic> json, String key) =>
+    json['ro'] ?? json['readOnly'] ?? false;
+
 @freezed
 @immutable
 abstract class ChannelRoom with _$ChannelRoom {
@@ -19,6 +22,9 @@ abstract class ChannelRoom with _$ChannelRoom {
     String? topic,
     String? description,
     RocketChatMessage? lastMessage,
+    @JsonKey(name: 'ro', readValue: _readOnlyValue)
+    @Default(false)
+    bool readOnly,
   }) = _ChannelRoom;
 
   factory ChannelRoom.fromJson(Map<String, dynamic> json) =>

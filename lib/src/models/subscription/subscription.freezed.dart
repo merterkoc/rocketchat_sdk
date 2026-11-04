@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$RocketChatSubscription {
 
 @JsonKey(name: '_id') String get id; String get rid; String get name; String? get fname; String get t;// "c" for channel, "d" for direct message, etc.
- bool get open; bool get alert; int get unread; int? get userMentions; int? get groupMentions; String? get ts; String? get ls; bool? get f;
+ bool get open; bool get alert; int get unread; int? get userMentions; int? get groupMentions; String? get ts; String? get ls; bool? get f;@JsonKey(name: 'ro', readValue: _readOnlyValue) bool get readOnly;
 /// Create a copy of RocketChatSubscription
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $RocketChatSubscriptionCopyWith<RocketChatSubscription> get copyWith => _$Rocket
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RocketChatSubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.name, name) || other.name == name)&&(identical(other.fname, fname) || other.fname == fname)&&(identical(other.t, t) || other.t == t)&&(identical(other.open, open) || other.open == open)&&(identical(other.alert, alert) || other.alert == alert)&&(identical(other.unread, unread) || other.unread == unread)&&(identical(other.userMentions, userMentions) || other.userMentions == userMentions)&&(identical(other.groupMentions, groupMentions) || other.groupMentions == groupMentions)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.ls, ls) || other.ls == ls)&&(identical(other.f, f) || other.f == f));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RocketChatSubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.name, name) || other.name == name)&&(identical(other.fname, fname) || other.fname == fname)&&(identical(other.t, t) || other.t == t)&&(identical(other.open, open) || other.open == open)&&(identical(other.alert, alert) || other.alert == alert)&&(identical(other.unread, unread) || other.unread == unread)&&(identical(other.userMentions, userMentions) || other.userMentions == userMentions)&&(identical(other.groupMentions, groupMentions) || other.groupMentions == groupMentions)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.ls, ls) || other.ls == ls)&&(identical(other.f, f) || other.f == f)&&(identical(other.readOnly, readOnly) || other.readOnly == readOnly));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,rid,name,fname,t,open,alert,unread,userMentions,groupMentions,ts,ls,f);
+int get hashCode => Object.hash(runtimeType,id,rid,name,fname,t,open,alert,unread,userMentions,groupMentions,ts,ls,f,readOnly);
 
 @override
 String toString() {
-  return 'RocketChatSubscription(id: $id, rid: $rid, name: $name, fname: $fname, t: $t, open: $open, alert: $alert, unread: $unread, userMentions: $userMentions, groupMentions: $groupMentions, ts: $ts, ls: $ls, f: $f)';
+  return 'RocketChatSubscription(id: $id, rid: $rid, name: $name, fname: $fname, t: $t, open: $open, alert: $alert, unread: $unread, userMentions: $userMentions, groupMentions: $groupMentions, ts: $ts, ls: $ls, f: $f, readOnly: $readOnly)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $RocketChatSubscriptionCopyWith<$Res>  {
   factory $RocketChatSubscriptionCopyWith(RocketChatSubscription value, $Res Function(RocketChatSubscription) _then) = _$RocketChatSubscriptionCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String rid, String name, String? fname, String t, bool open, bool alert, int unread, int? userMentions, int? groupMentions, String? ts, String? ls, bool? f
+@JsonKey(name: '_id') String id, String rid, String name, String? fname, String t, bool open, bool alert, int unread, int? userMentions, int? groupMentions, String? ts, String? ls, bool? f,@JsonKey(name: 'ro', readValue: _readOnlyValue) bool readOnly
 });
 
 
@@ -66,7 +66,7 @@ class _$RocketChatSubscriptionCopyWithImpl<$Res>
 
 /// Create a copy of RocketChatSubscription
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? rid = null,Object? name = null,Object? fname = freezed,Object? t = null,Object? open = null,Object? alert = null,Object? unread = null,Object? userMentions = freezed,Object? groupMentions = freezed,Object? ts = freezed,Object? ls = freezed,Object? f = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? rid = null,Object? name = null,Object? fname = freezed,Object? t = null,Object? open = null,Object? alert = null,Object? unread = null,Object? userMentions = freezed,Object? groupMentions = freezed,Object? ts = freezed,Object? ls = freezed,Object? f = freezed,Object? readOnly = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,rid: null == rid ? _self.rid : rid // ignore: cast_nullable_to_non_nullable
@@ -81,7 +81,8 @@ as int?,groupMentions: freezed == groupMentions ? _self.groupMentions : groupMen
 as int?,ts: freezed == ts ? _self.ts : ts // ignore: cast_nullable_to_non_nullable
 as String?,ls: freezed == ls ? _self.ls : ls // ignore: cast_nullable_to_non_nullable
 as String?,f: freezed == f ? _self.f : f // ignore: cast_nullable_to_non_nullable
-as bool?,
+as bool?,readOnly: null == readOnly ? _self.readOnly : readOnly // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -166,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String name,  String? fname,  String t,  bool open,  bool alert,  int unread,  int? userMentions,  int? groupMentions,  String? ts,  String? ls,  bool? f)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String name,  String? fname,  String t,  bool open,  bool alert,  int unread,  int? userMentions,  int? groupMentions,  String? ts,  String? ls,  bool? f, @JsonKey(name: 'ro', readValue: _readOnlyValue)  bool readOnly)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RocketChatSubscription() when $default != null:
-return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_that.alert,_that.unread,_that.userMentions,_that.groupMentions,_that.ts,_that.ls,_that.f);case _:
+return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_that.alert,_that.unread,_that.userMentions,_that.groupMentions,_that.ts,_that.ls,_that.f,_that.readOnly);case _:
   return orElse();
 
 }
@@ -187,10 +188,10 @@ return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String name,  String? fname,  String t,  bool open,  bool alert,  int unread,  int? userMentions,  int? groupMentions,  String? ts,  String? ls,  bool? f)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: '_id')  String id,  String rid,  String name,  String? fname,  String t,  bool open,  bool alert,  int unread,  int? userMentions,  int? groupMentions,  String? ts,  String? ls,  bool? f, @JsonKey(name: 'ro', readValue: _readOnlyValue)  bool readOnly)  $default,) {final _that = this;
 switch (_that) {
 case _RocketChatSubscription():
-return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_that.alert,_that.unread,_that.userMentions,_that.groupMentions,_that.ts,_that.ls,_that.f);case _:
+return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_that.alert,_that.unread,_that.userMentions,_that.groupMentions,_that.ts,_that.ls,_that.f,_that.readOnly);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +208,10 @@ return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: '_id')  String id,  String rid,  String name,  String? fname,  String t,  bool open,  bool alert,  int unread,  int? userMentions,  int? groupMentions,  String? ts,  String? ls,  bool? f)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: '_id')  String id,  String rid,  String name,  String? fname,  String t,  bool open,  bool alert,  int unread,  int? userMentions,  int? groupMentions,  String? ts,  String? ls,  bool? f, @JsonKey(name: 'ro', readValue: _readOnlyValue)  bool readOnly)?  $default,) {final _that = this;
 switch (_that) {
 case _RocketChatSubscription() when $default != null:
-return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_that.alert,_that.unread,_that.userMentions,_that.groupMentions,_that.ts,_that.ls,_that.f);case _:
+return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_that.alert,_that.unread,_that.userMentions,_that.groupMentions,_that.ts,_that.ls,_that.f,_that.readOnly);case _:
   return null;
 
 }
@@ -222,7 +223,7 @@ return $default(_that.id,_that.rid,_that.name,_that.fname,_that.t,_that.open,_th
 @JsonSerializable()
 
 class _RocketChatSubscription implements RocketChatSubscription {
-   _RocketChatSubscription({@JsonKey(name: '_id') required this.id, required this.rid, required this.name, this.fname, required this.t, required this.open, required this.alert, required this.unread, this.userMentions, this.groupMentions, this.ts, this.ls, this.f});
+   _RocketChatSubscription({@JsonKey(name: '_id') required this.id, required this.rid, required this.name, this.fname, required this.t, required this.open, required this.alert, required this.unread, this.userMentions, this.groupMentions, this.ts, this.ls, this.f, @JsonKey(name: 'ro', readValue: _readOnlyValue) this.readOnly = false});
   factory _RocketChatSubscription.fromJson(Map<String, dynamic> json) => _$RocketChatSubscriptionFromJson(json);
 
 @override@JsonKey(name: '_id') final  String id;
@@ -239,6 +240,7 @@ class _RocketChatSubscription implements RocketChatSubscription {
 @override final  String? ts;
 @override final  String? ls;
 @override final  bool? f;
+@override@JsonKey(name: 'ro', readValue: _readOnlyValue) final  bool readOnly;
 
 /// Create a copy of RocketChatSubscription
 /// with the given fields replaced by the non-null parameter values.
@@ -253,16 +255,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RocketChatSubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.name, name) || other.name == name)&&(identical(other.fname, fname) || other.fname == fname)&&(identical(other.t, t) || other.t == t)&&(identical(other.open, open) || other.open == open)&&(identical(other.alert, alert) || other.alert == alert)&&(identical(other.unread, unread) || other.unread == unread)&&(identical(other.userMentions, userMentions) || other.userMentions == userMentions)&&(identical(other.groupMentions, groupMentions) || other.groupMentions == groupMentions)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.ls, ls) || other.ls == ls)&&(identical(other.f, f) || other.f == f));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RocketChatSubscription&&(identical(other.id, id) || other.id == id)&&(identical(other.rid, rid) || other.rid == rid)&&(identical(other.name, name) || other.name == name)&&(identical(other.fname, fname) || other.fname == fname)&&(identical(other.t, t) || other.t == t)&&(identical(other.open, open) || other.open == open)&&(identical(other.alert, alert) || other.alert == alert)&&(identical(other.unread, unread) || other.unread == unread)&&(identical(other.userMentions, userMentions) || other.userMentions == userMentions)&&(identical(other.groupMentions, groupMentions) || other.groupMentions == groupMentions)&&(identical(other.ts, ts) || other.ts == ts)&&(identical(other.ls, ls) || other.ls == ls)&&(identical(other.f, f) || other.f == f)&&(identical(other.readOnly, readOnly) || other.readOnly == readOnly));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,rid,name,fname,t,open,alert,unread,userMentions,groupMentions,ts,ls,f);
+int get hashCode => Object.hash(runtimeType,id,rid,name,fname,t,open,alert,unread,userMentions,groupMentions,ts,ls,f,readOnly);
 
 @override
 String toString() {
-  return 'RocketChatSubscription(id: $id, rid: $rid, name: $name, fname: $fname, t: $t, open: $open, alert: $alert, unread: $unread, userMentions: $userMentions, groupMentions: $groupMentions, ts: $ts, ls: $ls, f: $f)';
+  return 'RocketChatSubscription(id: $id, rid: $rid, name: $name, fname: $fname, t: $t, open: $open, alert: $alert, unread: $unread, userMentions: $userMentions, groupMentions: $groupMentions, ts: $ts, ls: $ls, f: $f, readOnly: $readOnly)';
 }
 
 
@@ -273,7 +275,7 @@ abstract mixin class _$RocketChatSubscriptionCopyWith<$Res> implements $RocketCh
   factory _$RocketChatSubscriptionCopyWith(_RocketChatSubscription value, $Res Function(_RocketChatSubscription) _then) = __$RocketChatSubscriptionCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String rid, String name, String? fname, String t, bool open, bool alert, int unread, int? userMentions, int? groupMentions, String? ts, String? ls, bool? f
+@JsonKey(name: '_id') String id, String rid, String name, String? fname, String t, bool open, bool alert, int unread, int? userMentions, int? groupMentions, String? ts, String? ls, bool? f,@JsonKey(name: 'ro', readValue: _readOnlyValue) bool readOnly
 });
 
 
@@ -290,7 +292,7 @@ class __$RocketChatSubscriptionCopyWithImpl<$Res>
 
 /// Create a copy of RocketChatSubscription
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? rid = null,Object? name = null,Object? fname = freezed,Object? t = null,Object? open = null,Object? alert = null,Object? unread = null,Object? userMentions = freezed,Object? groupMentions = freezed,Object? ts = freezed,Object? ls = freezed,Object? f = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? rid = null,Object? name = null,Object? fname = freezed,Object? t = null,Object? open = null,Object? alert = null,Object? unread = null,Object? userMentions = freezed,Object? groupMentions = freezed,Object? ts = freezed,Object? ls = freezed,Object? f = freezed,Object? readOnly = null,}) {
   return _then(_RocketChatSubscription(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,rid: null == rid ? _self.rid : rid // ignore: cast_nullable_to_non_nullable
@@ -305,7 +307,8 @@ as int?,groupMentions: freezed == groupMentions ? _self.groupMentions : groupMen
 as int?,ts: freezed == ts ? _self.ts : ts // ignore: cast_nullable_to_non_nullable
 as String?,ls: freezed == ls ? _self.ls : ls // ignore: cast_nullable_to_non_nullable
 as String?,f: freezed == f ? _self.f : f // ignore: cast_nullable_to_non_nullable
-as bool?,
+as bool?,readOnly: null == readOnly ? _self.readOnly : readOnly // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

@@ -3,6 +3,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'subscription.freezed.dart';
 part 'subscription.g.dart';
 
+Object? _readOnlyValue(Map<dynamic, dynamic> json, String key) =>
+    json['ro'] ?? json['readOnly'] ?? false;
+
 @freezed
 @immutable
 abstract class RocketChatSubscription with _$RocketChatSubscription {
@@ -20,6 +23,9 @@ abstract class RocketChatSubscription with _$RocketChatSubscription {
     String? ts,
     String? ls,
     bool? f,
+    @JsonKey(name: 'ro', readValue: _readOnlyValue)
+    @Default(false)
+    bool readOnly,
   }) = _RocketChatSubscription;
 
   factory RocketChatSubscription.fromJson(Map<String, dynamic> json) =>
