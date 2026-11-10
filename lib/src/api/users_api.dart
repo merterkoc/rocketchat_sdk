@@ -185,6 +185,111 @@ class RocketChatUsersApi {
     }
   }
 
+  /// Resets a user's avatar to the default.
+  /// Corresponds to `POST /api/v1/users.resetAvatar`
+  Future<bool> resetAvatar({String? userId}) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        'api/v1/users.resetAvatar',
+        data: {
+          if (userId != null && userId.isNotEmpty) 'userId': userId,
+        },
+      );
+
+      final dataMap = response.data;
+      if (response.statusCode == 200 &&
+          dataMap != null &&
+          dataMap['success'] == true) {
+        return true;
+      } else {
+        throw Exception(
+          'Failed to reset avatar: ${dataMap?['error'] ?? 'Unknown error'}',
+        );
+      }
+    } on DioException catch (e) {
+      throw Exception('HTTP Error: ${e.message}');
+    }
+  }
+
+  /// Sets a user's avatar.
+  /// Corresponds to `POST /api/v1/users.setAvatar`
+  ///
+  /// Can be set using an external image URL [avatarUrl]
+  /// or an image file via [imagePath] or [imageBytes].
+  Future<bool> setAvatar({
+    String? avatarUrl,
+    String? imagePath,
+    List<int>? imageBytes,
+    String? fileName,
+    String? mimeType,
+    String? userId,
+  }) async {
+    try {
+      Response<Map<String, dynamic>> response;
+
+      if (imagePath != null || imageBytes != null) {
+        MultipartFile file;
+        final resolvedFileName = fileName ??
+            (imagePath != null ? imagePath.split('/').last : 'avatar.png');
+        final resolvedMimeType = mimeType ??
+            (resolvedFileName.toLowerCase().endsWith('.png')
+                ? 'image/png'
+                : resolvedFileName.toLowerCase().endsWith('.webp')
+                    ? 'image/webp'
+                    : 'image/jpeg');
+
+        if (imagePath != null) {
+          file = await MultipartFile.fromFile(
+            imagePath,
+            filename: resolvedFileName,
+            contentType: DioMediaType.parse(resolvedMimeType),
+          );
+        } else {
+          file = MultipartFile.fromBytes(
+            imageBytes!,
+            filename: resolvedFileName,
+            contentType: DioMediaType.parse(resolvedMimeType),
+          );
+        }
+
+        final formData = FormData.fromMap({
+          'image': file,
+          if (userId != null && userId.isNotEmpty) 'userId': userId,
+        });
+
+        response = await _dio.post<Map<String, dynamic>>(
+          'api/v1/users.setAvatar',
+          data: formData,
+        );
+      } else if (avatarUrl != null && avatarUrl.isNotEmpty) {
+        response = await _dio.post<Map<String, dynamic>>(
+          'api/v1/users.setAvatar',
+          data: {
+            'avatarUrl': avatarUrl,
+            if (userId != null && userId.isNotEmpty) 'userId': userId,
+          },
+        );
+      } else {
+        throw ArgumentError(
+          'Either avatarUrl, imagePath, or imageBytes must be provided',
+        );
+      }
+
+      final dataMap = response.data;
+      if (response.statusCode == 200 &&
+          dataMap != null &&
+          dataMap['success'] == true) {
+        return true;
+      } else {
+        throw Exception(
+          'Failed to set avatar: ${dataMap?['error'] ?? 'Unknown error'}',
+        );
+      }
+    } on DioException catch (e) {
+      throw Exception('HTTP Error: ${e.message}');
+    }
+  }
+
   /// Gets a user's presence status.
   /// Corresponds to `GET /api/v1/users.getPresence`
   Future<String> getPresence({String? userId, String? username}) async {

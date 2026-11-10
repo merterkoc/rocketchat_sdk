@@ -137,5 +137,99 @@ void main() {
 
       expect(url, equals('http://192.168.2.127:3010/avatar/ayse.nur.kocaslan'));
     });
+
+    test('setAvatar with avatarUrl sends POST to api/v1/users.setAvatar with json payload', () async {
+      final dio = Dio();
+      RequestOptions? capturedOptions;
+
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            if (options.path.contains('api/v1/users.setAvatar')) {
+              capturedOptions = options;
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {'success': true},
+                ),
+              );
+            }
+          },
+        ),
+      );
+
+      final usersApi = RocketChatUsersApi(dio);
+      final result = await usersApi.setAvatar(avatarUrl: 'https://example.com/avatar.png');
+
+      expect(result, isTrue);
+      expect(capturedOptions, isNotNull);
+      expect(capturedOptions!.path, contains('api/v1/users.setAvatar'));
+      expect(capturedOptions!.data, equals({'avatarUrl': 'https://example.com/avatar.png'}));
+    });
+
+    test('setAvatar with imageBytes sends multipart/form-data', () async {
+      final dio = Dio();
+      RequestOptions? capturedOptions;
+
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            if (options.path.contains('api/v1/users.setAvatar')) {
+              capturedOptions = options;
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {'success': true},
+                ),
+              );
+            }
+          },
+        ),
+      );
+
+      final usersApi = RocketChatUsersApi(dio);
+      final result = await usersApi.setAvatar(
+        imageBytes: [1, 2, 3, 4],
+        fileName: 'test.jpg',
+      );
+
+      expect(result, isTrue);
+      expect(capturedOptions, isNotNull);
+      expect(capturedOptions!.path, contains('api/v1/users.setAvatar'));
+      expect(capturedOptions!.data, isA<FormData>());
+      final formData = capturedOptions!.data as FormData;
+      expect(formData.files.any((f) => f.key == 'image'), isTrue);
+    });
+
+    test('resetAvatar sends POST to api/v1/users.resetAvatar', () async {
+      final dio = Dio();
+      RequestOptions? capturedOptions;
+
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            if (options.path.contains('api/v1/users.resetAvatar')) {
+              capturedOptions = options;
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {'success': true},
+                ),
+              );
+            }
+          },
+        ),
+      );
+
+      final usersApi = RocketChatUsersApi(dio);
+      final result = await usersApi.resetAvatar();
+
+      expect(result, isTrue);
+      expect(capturedOptions, isNotNull);
+      expect(capturedOptions!.path, contains('api/v1/users.resetAvatar'));
+    });
   });
 }

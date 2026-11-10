@@ -1,3 +1,14 @@
+## 0.7.2
+
+- **Feature**: Added `client.users.setAvatar` (`POST /api/v1/users.setAvatar`):
+  - Supports updating user avatar using a local image file via `imagePath` or `imageBytes` (`multipart/form-data`).
+  - Supports setting user avatar via external image URL (`avatarUrl`).
+  - Includes automatic fallback to `avatarUrl` if image file upload fails.
+  - Supports updating another user's avatar via optional `userId` (when authorized).
+- **Feature**: Added `client.users.resetAvatar` (`POST /api/v1/users.resetAvatar`):
+  - Resets a user's avatar to the server default.
+- **Tests**: Added unit tests for `setAvatar` (URL and multipart) and `resetAvatar`.
+
 ## 0.7.1
 
 - **Feature**: Added `readOnly` property to `ChannelRoom` and `RocketChatSubscription` models:
