@@ -181,6 +181,195 @@ class RocketChatDmApi {
     }
   }
 
+  /// Deletes a message in a direct message (DM) room.
+  /// Corresponds to `POST /api/v1/chat.delete`
+  Future<bool> deleteMessage({
+    required String roomId,
+    required String msgId,
+    bool asUser = false,
+  }) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        'api/v1/chat.delete',
+        data: {
+          'roomId': roomId,
+          'msgId': msgId,
+          'asUser': asUser,
+        },
+      );
+
+      final dataMap = response.data;
+      if (response.statusCode == 200 &&
+          dataMap != null &&
+          dataMap['success'] == true) {
+        return true;
+      } else {
+        throw Exception(
+          'Failed to delete message: ${dataMap?['error'] ?? 'Unknown error'}',
+        );
+      }
+    } on DioException catch (e) {
+      final serverError = e.response?.data is Map
+          ? (e.response?.data['error'] ?? e.message)
+          : e.message;
+      throw Exception('HTTP Error: $serverError');
+    }
+  }
+
+  /// Closes (hides) a direct message (DM) room subscription for the current user.
+  /// Corresponds to `POST /api/v1/dm.close` (with fallback to `api/v1/im.close`).
+  Future<bool> close({required String roomId}) async {
+    try {
+      Response<Map<String, dynamic>> response;
+      try {
+        response = await _dio.post<Map<String, dynamic>>(
+          'api/v1/dm.close',
+          data: {
+            'roomId': roomId,
+          },
+        );
+      } on DioException catch (e) {
+        if (e.response?.statusCode == 404) {
+          response = await _dio.post<Map<String, dynamic>>(
+            'api/v1/im.close',
+            data: {
+              'roomId': roomId,
+            },
+          );
+        } else {
+          rethrow;
+        }
+      }
+
+      final dataMap = response.data;
+      if (response.statusCode == 200 &&
+          dataMap != null &&
+          dataMap['success'] == true) {
+        return true;
+      } else {
+        throw Exception(
+          'Failed to close DM room: ${dataMap?['error'] ?? 'Unknown error'}',
+        );
+      }
+    } on DioException catch (e) {
+      final serverError = e.response?.data is Map
+          ? (e.response?.data['error'] ?? e.message)
+          : e.message;
+      throw Exception('HTTP Error: $serverError');
+    }
+  }
+
+  /// Opens (unhides) a direct message (DM) room subscription for the current user.
+  /// Corresponds to `POST /api/v1/dm.open` (with fallback to `api/v1/im.open`).
+  Future<bool> open({required String roomId}) async {
+    try {
+      Response<Map<String, dynamic>> response;
+      try {
+        response = await _dio.post<Map<String, dynamic>>(
+          'api/v1/dm.open',
+          data: {
+            'roomId': roomId,
+          },
+        );
+      } on DioException catch (e) {
+        if (e.response?.statusCode == 404) {
+          response = await _dio.post<Map<String, dynamic>>(
+            'api/v1/im.open',
+            data: {
+              'roomId': roomId,
+            },
+          );
+        } else {
+          rethrow;
+        }
+      }
+
+      final dataMap = response.data;
+      if (response.statusCode == 200 &&
+          dataMap != null &&
+          dataMap['success'] == true) {
+        return true;
+      } else {
+        throw Exception(
+          'Failed to open DM room: ${dataMap?['error'] ?? 'Unknown error'}',
+        );
+      }
+    } on DioException catch (e) {
+      final serverError = e.response?.data is Map
+          ? (e.response?.data['error'] ?? e.message)
+          : e.message;
+      throw Exception('HTTP Error: $serverError');
+    }
+  }
+
+  /// Deletes a direct message (DM) room by [roomId] or [username].
+  /// Corresponds to `POST /api/v1/dm.delete` (with fallback to `api/v1/im.delete`).
+  /// If [fallbackToClose] is `true` and the server restricts `dm.delete` permissions
+  /// (HTTP 400/403), automatically falls back to [close] when [roomId] is provided.
+  Future<bool> delete({
+    String? roomId,
+    String? username,
+    bool fallbackToClose = true,
+  }) async {
+    final hasRoomId = roomId != null && roomId.trim().isNotEmpty;
+    final hasUsername = username != null && username.trim().isNotEmpty;
+    if (!hasRoomId && !hasUsername) {
+      throw ArgumentError('Either roomId or username must be provided');
+    }
+
+    final payload = <String, dynamic>{
+      if (hasRoomId) 'roomId': roomId.trim(),
+      if (hasUsername) 'username': username.trim(),
+    };
+
+    try {
+      Response<Map<String, dynamic>> response;
+      try {
+        response = await _dio.post<Map<String, dynamic>>(
+          'api/v1/dm.delete',
+          data: payload,
+        );
+      } on DioException catch (e) {
+        if (e.response?.statusCode == 404) {
+          response = await _dio.post<Map<String, dynamic>>(
+            'api/v1/im.delete',
+            data: payload,
+          );
+        } else if (fallbackToClose &&
+            hasRoomId &&
+            (e.response?.statusCode == 400 || e.response?.statusCode == 403)) {
+          return await close(roomId: roomId.trim());
+        } else {
+          rethrow;
+        }
+      }
+
+      final dataMap = response.data;
+      if (response.statusCode == 200 &&
+          dataMap != null &&
+          dataMap['success'] == true) {
+        return true;
+      } else {
+        if (fallbackToClose && hasRoomId) {
+          return await close(roomId: roomId.trim());
+        }
+        throw Exception(
+          'Failed to delete DM room: ${dataMap?['error'] ?? 'Unknown error'}',
+        );
+      }
+    } on DioException catch (e) {
+      if (fallbackToClose &&
+          hasRoomId &&
+          (e.response?.statusCode == 400 || e.response?.statusCode == 403)) {
+        return await close(roomId: roomId.trim());
+      }
+      final serverError = e.response?.data is Map
+          ? (e.response?.data['error'] ?? e.message)
+          : e.message;
+      throw Exception('HTTP Error: $serverError');
+    }
+  }
+
   /// Uploads and sends a media file (image or video) to a room.
   /// Supports both `POST /api/v1/rooms.upload/{roomId}` and
   /// `POST /api/v1/rooms.media/{roomId}` + `POST /api/v1/rooms.mediaConfirm/{roomId}/{fileId}`.

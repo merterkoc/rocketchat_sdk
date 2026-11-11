@@ -36,6 +36,16 @@ class UserPresenceEvent {
   UserPresenceEvent(this.userId, this.username, this.status);
 }
 
+class MessageDeletedEvent {
+  final String roomId;
+  final String messageId;
+
+  MessageDeletedEvent({
+    required this.roomId,
+    required this.messageId,
+  });
+}
+
 class RocketChatRealtimeApi {
   final String baseUrl;
   String? userId;
@@ -49,6 +59,9 @@ class RocketChatRealtimeApi {
 
   final _messageController = StreamController<RocketChatMessage>.broadcast();
   Stream<RocketChatMessage> get messageStream => _messageController.stream;
+
+  final _messageDeletedController = StreamController<MessageDeletedEvent>.broadcast();
+  Stream<MessageDeletedEvent> get messageDeletedStream => _messageDeletedController.stream;
 
   final _subscriptionEventController = StreamController<SubscriptionChangeEvent>.broadcast();
   Stream<SubscriptionChangeEvent> get subscriptionEventStream => _subscriptionEventController.stream;
@@ -271,6 +284,12 @@ class RocketChatRealtimeApi {
         'name': 'stream-room-messages',
         'params': [roomId, false]
       });
+      _send({
+        'msg': 'sub',
+        'id': 'sub-del-$roomId',
+        'name': 'stream-notify-room',
+        'params': ['$roomId/deleteMessage', false]
+      });
     }
   }
 
@@ -282,6 +301,10 @@ class RocketChatRealtimeApi {
       _send({
         'msg': 'unsub',
         'id': 'sub-msg-$roomId',
+      });
+      _send({
+        'msg': 'unsub',
+        'id': 'sub-del-$roomId',
       });
     }
   }
@@ -345,6 +368,12 @@ class RocketChatRealtimeApi {
               'name': 'stream-room-messages',
               'params': [roomId, false]
             });
+            _send({
+              'msg': 'sub',
+              'id': 'sub-del-$roomId',
+              'name': 'stream-notify-room',
+              'params': ['$roomId/deleteMessage', false]
+            });
           }
         } else {
           _log('Login failed: ${decoded['error']}');
@@ -389,6 +418,55 @@ class RocketChatRealtimeApi {
                     ));
                   }
                 }
+              } else if (eventName.endsWith('/rooms-changed')) {
+                _log('rooms-changed event: $args');
+                final action = args.isNotEmpty ? args[0].toString() : 'updated';
+                final rawData = args.length > 1 && args[1] is Map<String, dynamic>
+                    ? args[1] as Map<String, dynamic>
+                    : null;
+                if (rawData != null && action == 'removed') {
+                  final normalized = _normalizeEjsonMap(rawData);
+                  final rid = (normalized['rid'] ?? normalized['_id']) as String?;
+                  if (rid != null && rid.isNotEmpty && !_subscriptionEventController.isClosed) {
+                    _subscriptionEventController.add(SubscriptionChangeEvent(
+                      action: 'removed',
+                      data: {
+                        ...normalized,
+                        'rid': rid,
+                      },
+                    ));
+                  }
+                }
+              }
+            }
+          }
+        } else if (collection == 'stream-notify-room') {
+          final fields = decoded['fields'];
+          if (fields != null) {
+            final eventName = fields['eventName'] as String?;
+            final args = fields['args'] as List?;
+            if (eventName != null &&
+                eventName.endsWith('/deleteMessage') &&
+                args != null &&
+                args.isNotEmpty) {
+              final roomId = eventName.substring(
+                0,
+                eventName.length - '/deleteMessage'.length,
+              );
+              final firstArg = args.first;
+              final deletedId = firstArg is Map
+                  ? firstArg['_id'] as String?
+                  : null;
+              if (roomId.isNotEmpty &&
+                  deletedId != null &&
+                  deletedId.isNotEmpty &&
+                  !_messageDeletedController.isClosed) {
+                _messageDeletedController.add(
+                  MessageDeletedEvent(
+                    roomId: roomId,
+                    messageId: deletedId,
+                  ),
+                );
               }
             }
           }
@@ -465,6 +543,14 @@ class RocketChatRealtimeApi {
                     }
                   }
                   final msgObj = RocketChatMessage.fromJson(normalized);
+                  if (msgObj.type == 'rm' && !_messageDeletedController.isClosed) {
+                    _messageDeletedController.add(
+                      MessageDeletedEvent(
+                        roomId: msgObj.rid,
+                        messageId: msgObj.id,
+                      ),
+                    );
+                  }
                   if (!_messageController.isClosed) {
                     _messageController.add(msgObj);
                   }
@@ -499,6 +585,7 @@ class RocketChatRealtimeApi {
     _channel = null;
     unawaited(_presenceController.close());
     unawaited(_messageController.close());
+    unawaited(_messageDeletedController.close());
     unawaited(_subscriptionEventController.close());
     _isConnecting = false;
     _isConnected = false;

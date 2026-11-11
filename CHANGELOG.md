@@ -1,3 +1,14 @@
+## 0.7.3
+
+- **Feature**: Added message deletion support (`POST /api/v1/chat.delete`):
+  - `client.chat.deleteMessage` / `client.chat.delete` and `client.dm.deleteMessage`.
+  - Realtime `messageDeletedStream` (`MessageDeletedEvent`) on `RocketChatRealtimeApi` via `stream-notify-room` (`{roomId}/deleteMessage`) and `t: "rm"` events.
+- **Feature**: Added chat / room deletion and closing support:
+  - `client.dm.delete` (`POST /api/v1/dm.delete` with fallback to `im.delete` and optional fallback to `dm.close` when `delete-d` permission is restricted).
+  - `client.dm.close` (`POST /api/v1/dm.close` / `im.close`) and `client.dm.open` (`POST /api/v1/dm.open` / `im.open`).
+  - `client.channels.delete` (`POST /api/v1/channels.delete`).
+- **Tests**: Added unit tests for message and chat deletion APIs.
+
 ## 0.7.2
 
 - **Feature**: Added `client.users.setAvatar` (`POST /api/v1/users.setAvatar`):

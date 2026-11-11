@@ -182,4 +182,43 @@ class RocketChatChannelsApi {
       throw Exception('HTTP Error: ${e.message}');
     }
   }
+
+  /// Deletes a public channel by [roomId] or [roomName].
+  /// Corresponds to `POST /api/v1/channels.delete`
+  Future<bool> delete({
+    String? roomId,
+    String? roomName,
+  }) async {
+    final hasRoomId = roomId != null && roomId.trim().isNotEmpty;
+    final hasRoomName = roomName != null && roomName.trim().isNotEmpty;
+    if (!hasRoomId && !hasRoomName) {
+      throw ArgumentError('Either roomId or roomName must be provided');
+    }
+
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        'api/v1/channels.delete',
+        data: {
+          if (hasRoomId) 'roomId': roomId.trim(),
+          if (hasRoomName) 'roomName': roomName.trim(),
+        },
+      );
+
+      final dataMap = response.data;
+      if (response.statusCode == 200 &&
+          dataMap != null &&
+          dataMap['success'] == true) {
+        return true;
+      } else {
+        throw Exception(
+          'Failed to delete channel: ${dataMap?['error'] ?? 'Unknown error'}',
+        );
+      }
+    } on DioException catch (e) {
+      final serverError = e.response?.data is Map
+          ? (e.response?.data['error'] ?? e.message)
+          : e.message;
+      throw Exception('HTTP Error: $serverError');
+    }
+  }
 }
